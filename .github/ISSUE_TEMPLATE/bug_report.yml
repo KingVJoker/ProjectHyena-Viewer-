@@ -1,0 +1,41 @@
+name: Bug report
+description: Something in Project Hyena is broken or behaves wrongly
+labels: ["bug"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Project Hyena version
+      description: Help > About shows it, or use the installer file name.
+      placeholder: "0.1.0 alpha"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version and graphics card
+      placeholder: "Windows 11, NVIDIA GTX 1650"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. ...\n2. ...\n3. ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log or screenshots
+      description: "Logs are in %APPDATA%\\ProjectHyena_x64\\logs. Drag files or screenshots in here. Never post your password."
