@@ -1,0 +1,1531 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<hyena_launcher name="hyena_launcher"
+                left="0" top="0" right="-1" bottom="-1"
+                follows="all"
+                background_visible="false">
+
+    <!-- 1. FULLSCREEN BACKGROUND BLOCKER -->
+    <panel name="bg_blocker"
+           follows="all"
+           left="0" top="0" right="-1" bottom="-1"
+           background_visible="true"
+           background_opaque="true"
+           bg_opaque_color="0.047 0.078 0.114 1.0"
+           mouse_opaque="true" />
+
+    <!-- 1a. CUSTOM TITLE BAR (the 34 px strip at the top). The window has no Windows title bar while this
+         screen is up, so this bar holds the logo, the Me / Help menu (placed by the code at x=160),
+         the build label and our own minimize / maximize / close buttons. Empty parts of it drag the window. -->
+    <icon name="titlebar_logo_box"
+          layout="topleft"
+          follows="left|top"
+          left="8" top="4" width="152" height="27"
+          image_name="Field_Round_Focus" mouse_opaque="false" />
+    <icon name="titlebar_logo"
+          layout="topleft"
+          follows="left|top"
+          left="13" top="5" width="25" height="25"
+          image_name="Hyena_Logo" mouse_opaque="false" />
+    <text name="titlebar_title"
+          layout="topleft"
+          follows="left|top"
+          left="44" top="10" width="112" height="16"
+          mouse_opaque="false"
+          value="PROJECT HYENA"
+          font.name="SansSerif" font.size="Small" font.style="BOLD"
+          text_color="0.90 0.94 0.97 1.0" />
+    <text name="build_label"
+          layout="topleft"
+          follows="right|top"
+          right="-150" width="200" top="11" height="14"
+          halign="right"
+          mouse_opaque="false"
+          value="Alpha Build v0.1.0"
+          font.name="SansSerif" font.size="LSmall"
+          text_color="0.90 0.94 0.97 1.0" />
+    <button name="win_min_btn"
+            layout="topleft"
+            follows="right|top"
+            right="-93" width="46" top="0" height="34"
+            label="" chrome="true" tab_stop="false"
+            image_unselected="Win_Min" image_selected="Win_Min"
+            image_hover_unselected="Win_Min_Hover" image_hover_selected="Win_Min_Hover"
+            image_pressed="Win_Min_Hover" image_pressed_selected="Win_Min_Hover"
+            image_color="1.0 1.0 1.0 1.0"
+            hover_glow_amount="0.0" />
+    <button name="win_max_btn"
+            layout="topleft"
+            follows="right|top"
+            right="-47" width="46" top="0" height="34"
+            label="" chrome="true" tab_stop="false"
+            image_unselected="Win_Max" image_selected="Win_Max"
+            image_hover_unselected="Win_Max_Hover" image_hover_selected="Win_Max_Hover"
+            image_pressed="Win_Max_Hover" image_pressed_selected="Win_Max_Hover"
+            image_color="1.0 1.0 1.0 1.0"
+            hover_glow_amount="0.0" />
+    <button name="win_close_btn"
+            layout="topleft"
+            follows="right|top"
+            right="-1" width="46" top="0" height="34"
+            label="" chrome="true" tab_stop="false"
+            image_unselected="Win_Close" image_selected="Win_Close"
+            image_hover_unselected="Win_Close_Hover" image_hover_selected="Win_Close_Hover"
+            image_pressed="Win_Close_Hover" image_pressed_selected="Win_Close_Hover"
+            image_color="1.0 1.0 1.0 1.0"
+            hover_glow_amount="0.0" />
+    <panel name="titlebar_line"
+           layout="topleft"
+           follows="left|right|top"
+           left="0" right="-1" top="33" height="1"
+           background_visible="true"
+           background_opaque="true"
+           bg_opaque_color="0.098 0.129 0.165 1.0"
+           border_visible="false"
+           mouse_opaque="false" />
+
+    <!-- 1b. TOP HALF: destination guide on the left, clocks / grid status / news on the right.
+         Sits between the top of the window and the bottom dock and resizes with the window. -->
+    <layout_stack name="top_stack"
+                  layout="bottomleft"
+                  follows="all"
+                  orientation="horizontal"
+                  left="8" right="-8" top="-34" bottom="126"
+                  border_size="12"
+                  clip="false">
+
+        <!-- LEFT: destination guide (filled in a later step) -->
+        <layout_panel name="column_left"
+                      auto_resize="true"
+                      user_resize="false"
+                      width="800" min_width="600" height="300"
+                      background_visible="false">
+            <layout_stack name="left_stack"
+                          follows="all"
+                          orientation="vertical"
+                          left="0" right="-1" top="-1" bottom="0"
+                          border_size="12"
+                          clip="false">
+
+                <!-- 1. HEADER BOX: the title and the four tabs, in a box of their own -->
+                <layout_panel name="card_dest_header"
+                              auto_resize="false"
+                              user_resize="false"
+                              height="46" min_height="46"
+                              background_visible="true"
+                      background_opaque="true"
+                      bg_opaque_image="Card_Round"
+                      bg_opaque_color="0.063 0.09 0.133 1.0"
+                      border_visible="false">
+                    <text layout="topleft" name="destination_label"
+                          follows="left|top"
+                          left="16" top="17" width="170" height="14"
+                          value="DESTINATION GUIDE"
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD" text_color="0.0 0.898 1.0 1.0" />
+                    <button layout="topleft" name="dest_tab_featured"
+                              follows="right|top"
+                              right="-272" width="72" top="10" height="26"
+                              label="Featured"
+                              label_color="0.62 0.70 0.78 1.0"
+                              label_color_selected="0.0 0.898 1.0 1.0"
+                              label_shadow="false"
+                              chrome="true" tab_stop="false"
+                              image_unselected="Clear_Pixel"
+                              image_hover_unselected="Field_Round"
+                              image_pressed="Field_Round"
+                              image_selected="Field_Round_Focus"
+                              image_hover_selected="Field_Round_Focus"
+                              image_pressed_selected="Field_Round_Focus"
+                              image_color="1.0 1.0 1.0 1.0"
+                              hover_glow_amount="0.0"
+                              font.name="SansSerif" font.size="LSmall" />
+                    <button layout="topleft" name="dest_tab_popular"
+                              follows="right|top"
+                              right="-196" width="72" top="10" height="26"
+                              label="Top Spots"
+                              label_color="0.62 0.70 0.78 1.0"
+                              label_color_selected="0.0 0.898 1.0 1.0"
+                              label_shadow="false"
+                              chrome="true" tab_stop="false"
+                              image_unselected="Clear_Pixel"
+                              image_hover_unselected="Field_Round"
+                              image_pressed="Field_Round"
+                              image_selected="Field_Round_Focus"
+                              image_hover_selected="Field_Round_Focus"
+                              image_pressed_selected="Field_Round_Focus"
+                              image_color="1.0 1.0 1.0 1.0"
+                              hover_glow_amount="0.0"
+                              font.name="SansSerif" font.size="LSmall" />
+                    <button layout="topleft" name="dest_tab_editors"
+                              follows="right|top"
+                              right="-92" width="100" top="10" height="26"
+                              label="Hyena Curated"
+                              label_color="0.62 0.70 0.78 1.0"
+                              label_color_selected="0.0 0.898 1.0 1.0"
+                              label_shadow="false"
+                              chrome="true" tab_stop="false"
+                              image_unselected="Clear_Pixel"
+                              image_hover_unselected="Field_Round"
+                              image_pressed="Field_Round"
+                              image_selected="Field_Round_Focus"
+                              image_hover_selected="Field_Round_Focus"
+                              image_pressed_selected="Field_Round_Focus"
+                              image_color="1.0 1.0 1.0 1.0"
+                              hover_glow_amount="0.0"
+                              font.name="SansSerif" font.size="LSmall" />
+                    <button layout="topleft" name="dest_tab_newcomer"
+                              follows="right|top"
+                              right="-16" width="72" top="10" height="26"
+                              label="Newcomer"
+                              label_color="0.62 0.70 0.78 1.0"
+                              label_color_selected="0.0 0.898 1.0 1.0"
+                              label_shadow="false"
+                              chrome="true" tab_stop="false"
+                              image_unselected="Clear_Pixel"
+                              image_hover_unselected="Field_Round"
+                              image_pressed="Field_Round"
+                              image_selected="Field_Round_Focus"
+                              image_hover_selected="Field_Round_Focus"
+                              image_pressed_selected="Field_Round_Focus"
+                              image_color="1.0 1.0 1.0 1.0"
+                              hover_glow_amount="0.0"
+                              font.name="SansSerif" font.size="LSmall" />
+                </layout_panel>
+
+                <!-- 2. MAIN BOX: the preview picture and the selected destination -->
+                <layout_panel name="card_destination"
+                              auto_resize="true"
+                              user_resize="false"
+                              height="300" min_height="210"
+                              background_visible="true"
+                      background_opaque="true"
+                      bg_opaque_image="Card_Round"
+                      bg_opaque_color="0.063 0.09 0.133 1.0"
+                      border_visible="false">
+                    <icon layout="bottomleft" name="dest_preview_bg"
+                          follows="all"
+                          left="12" right="-12" top="-12" bottom="112"
+                          image_name="Tile_Round" mouse_opaque="false" />
+                    <!-- the destination's own picture (from "picture" in hyena_destinations.xml); hidden when it has none -->
+                    <icon layout="bottomleft" name="dest_preview_img"
+                          follows="all"
+                          left="12" right="-12" top="-12" bottom="112"
+                          visible="false" mouse_opaque="false" />
+                    <text layout="bottomleft" name="dest_preview_text"
+                          follows="all"
+                          left="12" right="-12" top="-12" bottom="112"
+                          halign="center" valign="center"
+                          mouse_opaque="false"
+                          value="[ PBR REGION RENDER PREVIEW ]"
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD" text_color="0.22 0.29 0.37 1.0" />
+                    <icon layout="bottomleft" name="dest_badge_bg"
+                          follows="left|bottom"
+                          left="22" bottom="123" width="124" height="19"
+                          image_name="Badge_Teal" mouse_opaque="false" />
+                    <text layout="bottomleft" name="dest_badge_text"
+                          follows="left|bottom"
+                          left="22" bottom="126" width="124" height="12"
+                          halign="center"
+                          value="FEATURED"
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD" text_color="0.0 0.898 1.0 1.0" />
+
+                    <text layout="bottomleft" name="dest_title"
+                          follows="left|right|bottom"
+                          left="16" right="-140" bottom="84" height="22"
+                          use_ellipses="true"
+                          value=""
+                          font.name="SansSerif" font.size="Large" font.style="BOLD"
+                          text_color="0.90 0.94 0.97 1.0" />
+                    <text layout="bottomleft" name="dest_desc"
+                          follows="left|right|bottom"
+                          left="16" right="-140" bottom="36" height="46"
+                          word_wrap="true"
+                          valign="top"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall" text_color="0.62 0.70 0.78 1.0" />
+                    <icon layout="bottomleft" name="dest_stats_dot"
+                          follows="left|bottom"
+                          left="16" bottom="21" width="8" height="8"
+                          image_name="Grid_Dot" color="0.20 0.90 0.50 1.0" mouse_opaque="false" />
+                    <text layout="bottomleft" name="dest_avatars"
+                          follows="left|bottom"
+                          left="30" bottom="18" width="225" height="14"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall" text_color="0.20 0.90 0.50 1.0" />
+                    <text layout="bottomleft" name="dest_notes"
+                          follows="left|right|bottom"
+                          left="270" right="-140" bottom="18" height="14"
+                          use_ellipses="true"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall" text_color="0.62 0.70 0.78 1.0" />
+                    <button layout="bottomleft" name="dest_target_btn"
+                            follows="right|bottom"
+                            right="-16" width="116" bottom="14" height="30"
+                            label="SET AS TARGET"
+                            halign="center" pad_left="0" pad_right="0" pad_bottom="0"
+                            label_color="0.0 0.05 0.08 1.0"
+                            label_color_selected="0.0 0.05 0.08 1.0"
+                            label_shadow="false"
+                            chrome="true" tab_stop="false"
+                            image_unselected="Button_Cyan" image_selected="Button_Cyan"
+                            image_hover_unselected="Button_Cyan" image_hover_selected="Button_Cyan"
+                            image_pressed="Button_Cyan" image_pressed_selected="Button_Cyan"
+                            image_color="1.0 1.0 1.0 1.0"
+                            hover_glow_amount="0.2"
+                            font.name="SansSerif" font.size="LSmall" font.style="BOLD" />
+                </layout_panel>
+
+                <!-- 3. THE THREE LOCATION CARDS: each one is a separate box on the page background -->
+                <layout_panel name="card_dest_cards"
+                              auto_resize="false"
+                              user_resize="false"
+                              height="66" min_height="66"
+                              background_visible="false">
+                    <layout_stack name="dest_cards_stack"
+                                  follows="all"
+                                  orientation="horizontal"
+                                  left="0" right="-1" top="-1" bottom="0"
+                                  border_size="12"
+                                  clip="false">
+                        <layout_panel name="dest_card1_panel" auto_resize="true" user_resize="false"
+                                          width="200" min_width="90" height="66" background_visible="false">
+                            <icon layout="topleft" name="dest_card1_bg" follows="all"
+                                  left="0" right="-1" top="0" height="66"
+                                  image_name="Field_Round" mouse_opaque="false" />
+                            <icon layout="topleft" name="dest_card1_sel" follows="all"
+                                  left="0" right="-1" top="0" height="66"
+                                  image_name="Field_Round_Focus" visible="false" mouse_opaque="false" />
+                            <text layout="topleft" name="dest_card1_tag" follows="left|right|top"
+                                  left="14" right="-8" top="12" height="10" use_ellipses="true" value=""
+                                  font.name="SansSerif" font.size="LSmall" text_color="0.62 0.70 0.78 1.0" />
+                            <text layout="topleft" name="dest_card1_name" follows="left|right|top"
+                                  left="14" right="-8" top="27" height="14" use_ellipses="true" value=""
+                                  font.name="SansSerif" font.size="LSmall" font.style="BOLD" text_color="0.90 0.94 0.97 1.0" />
+                            <text layout="topleft" name="dest_card1_region" follows="left|right|top"
+                                  left="14" right="-8" top="45" height="12" use_ellipses="true" value=""
+                                  font.name="SansSerif" font.size="LSmall" text_color="0.62 0.70 0.78 1.0" />
+                            <button layout="topleft" name="dest_card1_btn" follows="all"
+                                    left="0" right="-1" top="0" height="66"
+                                    label="" chrome="true" tab_stop="false"
+                                    image_unselected="Clear_Pixel" image_selected="Clear_Pixel"
+                                    image_hover_unselected="Clear_Pixel" image_hover_selected="Clear_Pixel"
+                                    image_pressed="Clear_Pixel" image_pressed_selected="Clear_Pixel"
+                                    hover_glow_amount="0.0" />
+                        </layout_panel>
+                        <layout_panel name="dest_card2_panel" auto_resize="true" user_resize="false"
+                                          width="200" min_width="90" height="66" background_visible="false">
+                            <icon layout="topleft" name="dest_card2_bg" follows="all"
+                                  left="0" right="-1" top="0" height="66"
+                                  image_name="Field_Round" mouse_opaque="false" />
+                            <icon layout="topleft" name="dest_card2_sel" follows="all"
+                                  left="0" right="-1" top="0" height="66"
+                                  image_name="Field_Round_Focus" visible="false" mouse_opaque="false" />
+                            <text layout="topleft" name="dest_card2_tag" follows="left|right|top"
+                                  left="14" right="-8" top="12" height="10" use_ellipses="true" value=""
+                                  font.name="SansSerif" font.size="LSmall" text_color="0.62 0.70 0.78 1.0" />
+                            <text layout="topleft" name="dest_card2_name" follows="left|right|top"
+                                  left="14" right="-8" top="27" height="14" use_ellipses="true" value=""
+                                  font.name="SansSerif" font.size="LSmall" font.style="BOLD" text_color="0.90 0.94 0.97 1.0" />
+                            <text layout="topleft" name="dest_card2_region" follows="left|right|top"
+                                  left="14" right="-8" top="45" height="12" use_ellipses="true" value=""
+                                  font.name="SansSerif" font.size="LSmall" text_color="0.62 0.70 0.78 1.0" />
+                            <button layout="topleft" name="dest_card2_btn" follows="all"
+                                    left="0" right="-1" top="0" height="66"
+                                    label="" chrome="true" tab_stop="false"
+                                    image_unselected="Clear_Pixel" image_selected="Clear_Pixel"
+                                    image_hover_unselected="Clear_Pixel" image_hover_selected="Clear_Pixel"
+                                    image_pressed="Clear_Pixel" image_pressed_selected="Clear_Pixel"
+                                    hover_glow_amount="0.0" />
+                        </layout_panel>
+                        <layout_panel name="dest_card3_panel" auto_resize="true" user_resize="false"
+                                          width="200" min_width="90" height="66" background_visible="false">
+                            <icon layout="topleft" name="dest_card3_bg" follows="all"
+                                  left="0" right="-1" top="0" height="66"
+                                  image_name="Field_Round" mouse_opaque="false" />
+                            <icon layout="topleft" name="dest_card3_sel" follows="all"
+                                  left="0" right="-1" top="0" height="66"
+                                  image_name="Field_Round_Focus" visible="false" mouse_opaque="false" />
+                            <text layout="topleft" name="dest_card3_tag" follows="left|right|top"
+                                  left="14" right="-8" top="12" height="10" use_ellipses="true" value=""
+                                  font.name="SansSerif" font.size="LSmall" text_color="0.62 0.70 0.78 1.0" />
+                            <text layout="topleft" name="dest_card3_name" follows="left|right|top"
+                                  left="14" right="-8" top="27" height="14" use_ellipses="true" value=""
+                                  font.name="SansSerif" font.size="LSmall" font.style="BOLD" text_color="0.90 0.94 0.97 1.0" />
+                            <text layout="topleft" name="dest_card3_region" follows="left|right|top"
+                                  left="14" right="-8" top="45" height="12" use_ellipses="true" value=""
+                                  font.name="SansSerif" font.size="LSmall" text_color="0.62 0.70 0.78 1.0" />
+                            <button layout="topleft" name="dest_card3_btn" follows="all"
+                                    left="0" right="-1" top="0" height="66"
+                                    label="" chrome="true" tab_stop="false"
+                                    image_unselected="Clear_Pixel" image_selected="Clear_Pixel"
+                                    image_hover_unselected="Clear_Pixel" image_hover_selected="Clear_Pixel"
+                                    image_pressed="Clear_Pixel" image_pressed_selected="Clear_Pixel"
+                                    hover_glow_amount="0.0" />
+                        </layout_panel>
+                    </layout_stack>
+                </layout_panel>
+
+                <!-- PRE-FLIGHT MAINTENANCE: a row of small maintenance buttons -->
+                <layout_panel name="card_preflight"
+                              auto_resize="false"
+                              user_resize="false"
+                              height="44" min_height="44"
+                              background_visible="true"
+                              background_opaque="true"
+                              bg_opaque_image="Card_Round"
+                              bg_opaque_color="0.063 0.09 0.133 1.0"
+                              border_visible="false">
+                    <text layout="topleft" name="preflight_label"
+                          follows="left|top"
+                          left="16" top="16" width="150" height="12"
+                          value="PRE-FLIGHT MAINTENANCE"
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                          text_color="0.62 0.70 0.78 1.0" />
+                    <button layout="topleft" name="preflight_flush_btn"
+                              follows="right|top"
+                              right="-324" width="96" top="9" height="26"
+                              label="Flush Cache"
+                              label_color="0.72 0.78 0.84 1.0"
+                              label_color_selected="0.72 0.78 0.84 1.0"
+                              label_shadow="false"
+                              chrome="true"
+                              tab_stop="false"
+                              image_unselected="Field_Round"
+                              image_selected="Field_Round"
+                              image_hover_unselected="Field_Round_Focus"
+                              image_hover_selected="Field_Round_Focus"
+                              image_pressed="Field_Round_Focus"
+                              image_pressed_selected="Field_Round_Focus"
+                              image_color="1.0 1.0 1.0 1.0"
+                              hover_glow_amount="0.0"
+                              font.name="SansSerif" font.size="LSmall" />
+                    <button layout="topleft" name="preflight_reindex_btn"
+                              follows="right|top"
+                              right="-220" width="96" top="9" height="26"
+                              label="Reindex Inv"
+                              label_color="0.72 0.78 0.84 1.0"
+                              label_color_selected="0.72 0.78 0.84 1.0"
+                              label_shadow="false"
+                              chrome="true"
+                              tab_stop="false"
+                              image_unselected="Field_Round"
+                              image_selected="Field_Round"
+                              image_hover_unselected="Field_Round_Focus"
+                              image_hover_selected="Field_Round_Focus"
+                              image_pressed="Field_Round_Focus"
+                              image_pressed_selected="Field_Round_Focus"
+                              image_color="1.0 1.0 1.0 1.0"
+                              hover_glow_amount="0.0"
+                              font.name="SansSerif" font.size="LSmall" />
+                    <button layout="topleft" name="preflight_voice_btn"
+                              follows="right|top"
+                              right="-116" width="96" top="9" height="26"
+                              label="Reset Voice"
+                              label_color="0.72 0.78 0.84 1.0"
+                              label_color_selected="0.72 0.78 0.84 1.0"
+                              label_shadow="false"
+                              chrome="true"
+                              tab_stop="false"
+                              image_unselected="Field_Round"
+                              image_selected="Field_Round"
+                              image_hover_unselected="Field_Round_Focus"
+                              image_hover_selected="Field_Round_Focus"
+                              image_pressed="Field_Round_Focus"
+                              image_pressed_selected="Field_Round_Focus"
+                              image_color="1.0 1.0 1.0 1.0"
+                              hover_glow_amount="0.0"
+                              font.name="SansSerif" font.size="LSmall" />
+                    <button layout="topleft" name="preflight_ping_btn"
+                              follows="right|top"
+                              right="-12" width="96" top="9" height="26"
+                              label="Ping Test"
+                              label_color="0.72 0.78 0.84 1.0"
+                              label_color_selected="0.72 0.78 0.84 1.0"
+                              label_shadow="false"
+                              chrome="true"
+                              tab_stop="false"
+                              image_unselected="Field_Round"
+                              image_selected="Field_Round"
+                              image_hover_unselected="Field_Round_Focus"
+                              image_hover_selected="Field_Round_Focus"
+                              image_pressed="Field_Round_Focus"
+                              image_pressed_selected="Field_Round_Focus"
+                              image_color="1.0 1.0 1.0 1.0"
+                              hover_glow_amount="0.0"
+                              font.name="SansSerif" font.size="LSmall" />
+                </layout_panel>
+
+            </layout_stack>
+        </layout_panel>
+
+        <!-- RIGHT: clocks, grid status, news -->
+        <layout_panel name="column_right"
+                      auto_resize="false"
+                      user_resize="false"
+                      width="350" min_width="350" height="300"
+                      background_visible="false">
+            <layout_stack name="right_stack"
+                          follows="all"
+                          orientation="vertical"
+                          left="0" right="-1" top="-1" bottom="0"
+                          border_size="14"
+                          clip="false">
+
+                <!-- CLOCKS -->
+                <layout_panel name="card_clocks"
+                              auto_resize="false"
+                              user_resize="false"
+                              height="84" min_height="84"
+                              background_visible="true"
+                              background_opaque="true"
+                              bg_opaque_image="Card_Round"
+                              bg_opaque_color="0.063 0.09 0.133 1.0"
+                              border_visible="false">
+                    <!-- Two equal halves with a thin fading line between them. The line is inset from the
+                         top and bottom of the card and fades out at both ends. -->
+                    <layout_stack name="clock_stack"
+                                  follows="all"
+                                  orientation="horizontal"
+                                  left="0" right="-1" top="-1" bottom="0"
+                                  border_size="0"
+                                  clip="false">
+                        <layout_panel name="clock_left"
+                                      auto_resize="true"
+                                      user_resize="false"
+                                      width="170" min_width="120" height="84"
+                                      background_visible="false">
+                            <text layout="topleft" name="slt_zone_text"
+                          follows="left|top"
+                          left="13" top="12" width="150" height="12"
+                          value="SLT PACIFIC TIME"
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                          text_color="0.0 0.898 1.0 1.0" />
+                            <text layout="topleft" name="slt_time_text"
+                          follows="left|top"
+                          left="13" top="27" width="155" height="26"
+                          value="--:--:--"
+                          font.name="SansSerif" font.size="Huge" font.style="BOLD"
+                          text_color="0.0 0.898 1.0 1.0" />
+                            <text layout="topleft" name="slt_sub_text"
+                          follows="left|top"
+                          left="13" top="60" width="150" height="12"
+                          value="Linden Lab Grid Time"
+                          font.name="SansSerif" font.size="LSmall"
+                          text_color="0.62 0.70 0.78 1.0" />
+                        </layout_panel>
+                        <layout_panel name="clock_divider_panel"
+                                      auto_resize="false"
+                                      user_resize="false"
+                                      width="1" min_width="1" height="84"
+                                      background_visible="false">
+                            <icon layout="topleft" name="clock_divider"
+                                  follows="left|top"
+                                  left="0" width="1" top="10" height="64"
+                                  image_name="Divider_Fade" mouse_opaque="false" />
+                        </layout_panel>
+                        <layout_panel name="clock_right"
+                                      auto_resize="true"
+                                      user_resize="false"
+                                      width="170" min_width="120" height="84"
+                                      background_visible="false">
+                            <text layout="topleft" name="local_zone_text"
+                          follows="right|top"
+                          right="-13" width="150" top="12" height="12"
+                          halign="right"
+                          use_ellipses="true"
+                          value="LOCAL TIME"
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                          text_color="0.62 0.70 0.78 1.0" />
+                            <text layout="topleft" name="local_time_text"
+                          follows="right|top"
+                          right="-13" width="155" top="27" height="26"
+                          halign="right"
+                          value="--:--:--"
+                          font.name="SansSerif" font.size="Huge" font.style="BOLD"
+                          text_color="0.0 0.898 1.0 1.0" />
+                            <combo_box layout="topleft" name="tz_combo"
+                               follows="right|top"
+                               right="-13" width="150" top="56" height="20"
+                               allow_text_entry="false"
+                               label="Local Time">
+                                <combo_box.combo_button draw_focus_border="false"
+                                    chrome="true"
+                                    halign="left"
+                                    pad_left="8"
+                                    pad_right="24"
+                                    font.name="SansSerif" font.size="Small"
+                                    label_color="0.90 0.94 0.97 1.0"
+                                    label_color_selected="0.90 0.94 0.97 1.0"
+                                    label_shadow="false"
+                                    image_unselected="Field_Round"
+                                    image_selected="Field_Round"
+                                    image_hover_unselected="Field_Round_Focus"
+                                    image_hover_selected="Field_Round_Focus"
+                                    image_pressed="Field_Round_Focus"
+                                    image_pressed_selected="Field_Round_Focus"
+                                    image_disabled="Field_Round"
+                                    image_color="1.0 1.0 1.0 1.0"
+                                    hover_glow_amount="0.0" />
+                                <combo_box.drop_down_button draw_focus_border="false"
+                                    halign="left"
+                                    pad_left="8"
+                                    pad_right="24"
+                                    font.name="SansSerif" font.size="Small"
+                                    label_color="0.90 0.94 0.97 1.0"
+                                    label_color_selected="0.90 0.94 0.97 1.0"
+                                    label_shadow="false"
+                                    image_unselected="Field_Round"
+                                    image_selected="Field_Round"
+                                    image_hover_unselected="Field_Round_Focus"
+                                    image_hover_selected="Field_Round_Focus"
+                                    image_pressed="Field_Round_Focus"
+                                    image_pressed_selected="Field_Round_Focus"
+                                    image_disabled="Field_Round"
+                                    image_color="1.0 1.0 1.0 1.0"
+                                    hover_glow_amount="0.0" />
+                                <combo_box.combo_list background_visible="true" bg_writeable_color="0.047 0.078 0.114 1.0" bg_readonly_color="0.047 0.078 0.114 1.0" bg_stripe_color="0.047 0.078 0.114 1.0" scroll_bar_bg_color="0.039 0.059 0.090 1.0" draw_stripes="false"
+                                    bg_selected_color="0.0 0.60 0.70 1.0"
+                                    hovered_color="0.0 0.30 0.37 1.0"
+                                    highlighted_color="0.0 0.30 0.37 1.0"
+                                    fg_unselected_color="0.90 0.94 0.97 1.0"
+                                    fg_selected_color="0.0 0.05 0.08 1.0" />
+                            </combo_box>
+                            <icon layout="topleft" name="tz_arrow"
+                          follows="right|top"
+                          right="-19" width="16" top="58" height="16"
+                          image_name="Combo_Arrow" color="0.0 0.898 1.0 1.0"
+                          mouse_opaque="false" />
+                        </layout_panel>
+                    </layout_stack>
+                </layout_panel>
+
+                <!-- GRID STATUS (178 px tall) -->
+                <layout_panel name="card_grid_status"
+                              auto_resize="false"
+                              user_resize="false"
+                              height="178" min_height="178"
+                              background_visible="true"
+                              background_opaque="true"
+                              bg_opaque_image="Card_Round"
+                              bg_opaque_color="0.063 0.09 0.133 1.0"
+                              border_visible="false">
+                    <icon layout="topleft" name="grid_dot_icon"
+                          follows="left|top"
+                          left="12" top="15" width="12" height="12"
+                          image_name="Grid_Dot" color="0.20 0.90 0.50 1.0" mouse_opaque="false" />
+                    <text layout="topleft" name="grid_label"
+                          follows="left|top"
+                          left="30" top="15" width="100" height="12"
+                          value="GRID STATUS"
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                          text_color="0.90 0.94 0.97 1.0" />
+                    <icon layout="topleft" name="status_pill_icon"
+                          follows="right|top"
+                          right="-13" width="104" top="11" height="20"
+                          image_name="Pill_Round" mouse_opaque="false" />
+                    <text layout="topleft" name="grid_overall_text"
+                          follows="right|top"
+                          right="-13" width="104" top="15" height="12"
+                          halign="center"
+                          use_ellipses="true"
+                          value="CHECKING..."
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                          text_color="0.62 0.70 0.78 1.0" />
+
+                    <icon layout="topleft" name="online_bg"
+                          follows="left|right|top"
+                          left="13" right="-13" top="41" height="28"
+                          image_name="Field_Round" mouse_opaque="false" />
+                    <text layout="topleft" name="online_label"
+                          follows="left|top"
+                          left="24" top="50" width="110" height="11"
+                          value="ACTIVE RESIDENTS"
+                          font.name="SansSerif" font.size="LSmall"
+                          text_color="0.62 0.70 0.78 1.0" />
+                    <text layout="topleft" name="grid_online_text"
+                           follows="right|top"
+                           right="-16" width="210" top="49" height="12"
+                           halign="right"
+                           value="..."
+                           font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                           text_color="0.62 0.70 0.78 1.0" />
+
+                    <icon layout="topleft" name="tile1_bg"
+                          follows="left|top" left="13" width="158" top="82" height="38"
+                          image_name="Tile_Round" mouse_opaque="false" />
+                    <text layout="topleft" name="tile1_label"
+                          follows="left|top" left="24" width="136" top="90" height="11"
+                          use_ellipses="true"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall"
+                          text_color="0.62 0.70 0.78 1.0" />
+                    <text layout="topleft" name="tile1_status"
+                          follows="left|top" left="24" width="136" top="103" height="12"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                          text_color="0.62 0.70 0.78 1.0" />
+                    <icon layout="topleft" name="tile2_bg"
+                          follows="right|top" right="-13" width="158" top="82" height="38"
+                          image_name="Tile_Round" mouse_opaque="false" />
+                    <text layout="topleft" name="tile2_label"
+                          follows="right|top" right="-24" width="136" top="90" height="11"
+                          use_ellipses="true"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall"
+                          text_color="0.62 0.70 0.78 1.0" />
+                    <text layout="topleft" name="tile2_status"
+                          follows="right|top" right="-24" width="136" top="103" height="12"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                          text_color="0.62 0.70 0.78 1.0" />
+                    <icon layout="topleft" name="tile3_bg"
+                          follows="left|top" left="13" width="158" top="128" height="38"
+                          image_name="Tile_Round" mouse_opaque="false" />
+                    <text layout="topleft" name="tile3_label"
+                          follows="left|top" left="24" width="136" top="136" height="11"
+                          use_ellipses="true"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall"
+                          text_color="0.62 0.70 0.78 1.0" />
+                    <text layout="topleft" name="tile3_status"
+                          follows="left|top" left="24" width="136" top="149" height="12"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                          text_color="0.62 0.70 0.78 1.0" />
+                    <icon layout="topleft" name="tile4_bg"
+                          follows="right|top" right="-13" width="158" top="128" height="38"
+                          image_name="Tile_Round" mouse_opaque="false" />
+                    <text layout="topleft" name="tile4_label"
+                          follows="right|top" right="-24" width="136" top="136" height="11"
+                          use_ellipses="true"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall"
+                          text_color="0.62 0.70 0.78 1.0" />
+                    <text layout="topleft" name="tile4_status"
+                          follows="right|top" right="-24" width="136" top="149" height="12"
+                          value=""
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                          text_color="0.62 0.70 0.78 1.0" />
+                </layout_panel>
+
+                <!-- PATCH NOTES & NEWS -->
+                <layout_panel name="card_news"
+                              auto_resize="true"
+                              user_resize="false"
+                              height="200" min_height="140"
+                              background_visible="true"
+                              background_opaque="true"
+                              bg_opaque_image="Card_Round"
+                              bg_opaque_color="0.063 0.09 0.133 1.0"
+                              border_visible="false">
+                    <icon layout="topleft" name="news_icon"
+                          follows="left|top"
+                          left="12" top="14" width="14" height="14"
+                          image_name="News_Icon" color="0.90 0.94 0.97 1.0" mouse_opaque="false" />
+                    <text layout="topleft" name="news_label"
+                          follows="left|right|top"
+                          left="32" right="-13" top="15" height="12"
+                          value="PATCH NOTES &amp; NEWS"
+                          font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                          text_color="0.90 0.94 0.97 1.0" />
+                    <scroll_container layout="bottomleft" name="news_scroll"
+                                      follows="all"
+                                      left="14" right="-10" bottom="10" top="-38"
+                                      border_visible="false"
+                                      opaque="false">
+                        <panel name="news_items"
+                               follows="left|right|top"
+                               left="0" top="480" width="316" height="480"
+                               background_visible="false">
+                            <text layout="topleft" name="news1_tag"
+                                  follows="left|top"
+                                  left="2" top="6" width="200" height="12"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                                  text_color="0.0 0.898 1.0 1.0" />
+                            <text layout="topleft" name="news1_date"
+                                  follows="right|top"
+                                  right="-28" width="90" top="6" height="12"
+                                  halign="right"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall"
+                                  text_color="0.62 0.70 0.78 1.0" />
+                            <text layout="topleft" name="news1_title"
+                                  follows="left|right|top"
+                                  left="2" right="-4" top="24" height="16"
+                                  word_wrap="false"
+                                  use_ellipses="true"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="Small" font.style="BOLD"
+                                  text_color="1.0 1.0 1.0 1.0" />
+                            <text layout="topleft" name="news1_summary"
+                                  follows="left|right|top"
+                                  left="2" right="-4" top="46" height="36"
+                                  word_wrap="true"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall"
+                                  text_color="0.62 0.70 0.78 1.0" />
+                            <icon layout="topleft" name="news1_divider"
+                                  follows="left|right|top"
+                                  left="0" right="-1" top="88" height="1"
+                                  visible="false"
+                                  image_name="Divider_Line" mouse_opaque="false" />
+                            <text layout="topleft" name="news2_tag"
+                                  follows="left|top"
+                                  left="2" top="102" width="200" height="12"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                                  text_color="0.0 0.898 1.0 1.0" />
+                            <text layout="topleft" name="news2_date"
+                                  follows="right|top"
+                                  right="-28" width="90" top="102" height="12"
+                                  halign="right"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall"
+                                  text_color="0.62 0.70 0.78 1.0" />
+                            <text layout="topleft" name="news2_title"
+                                  follows="left|right|top"
+                                  left="2" right="-4" top="120" height="16"
+                                  word_wrap="false"
+                                  use_ellipses="true"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="Small" font.style="BOLD"
+                                  text_color="1.0 1.0 1.0 1.0" />
+                            <text layout="topleft" name="news2_summary"
+                                  follows="left|right|top"
+                                  left="2" right="-4" top="142" height="36"
+                                  word_wrap="true"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall"
+                                  text_color="0.62 0.70 0.78 1.0" />
+                            <icon layout="topleft" name="news2_divider"
+                                  follows="left|right|top"
+                                  left="0" right="-1" top="184" height="1"
+                                  visible="false"
+                                  image_name="Divider_Line" mouse_opaque="false" />
+                            <text layout="topleft" name="news3_tag"
+                                  follows="left|top"
+                                  left="2" top="198" width="200" height="12"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                                  text_color="0.0 0.898 1.0 1.0" />
+                            <text layout="topleft" name="news3_date"
+                                  follows="right|top"
+                                  right="-28" width="90" top="198" height="12"
+                                  halign="right"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall"
+                                  text_color="0.62 0.70 0.78 1.0" />
+                            <text layout="topleft" name="news3_title"
+                                  follows="left|right|top"
+                                  left="2" right="-4" top="216" height="16"
+                                  word_wrap="false"
+                                  use_ellipses="true"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="Small" font.style="BOLD"
+                                  text_color="1.0 1.0 1.0 1.0" />
+                            <text layout="topleft" name="news3_summary"
+                                  follows="left|right|top"
+                                  left="2" right="-4" top="238" height="36"
+                                  word_wrap="true"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall"
+                                  text_color="0.62 0.70 0.78 1.0" />
+                            <icon layout="topleft" name="news3_divider"
+                                  follows="left|right|top"
+                                  left="0" right="-1" top="280" height="1"
+                                  visible="false"
+                                  image_name="Divider_Line" mouse_opaque="false" />
+                            <text layout="topleft" name="news4_tag"
+                                  follows="left|top"
+                                  left="2" top="294" width="200" height="12"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                                  text_color="0.0 0.898 1.0 1.0" />
+                            <text layout="topleft" name="news4_date"
+                                  follows="right|top"
+                                  right="-28" width="90" top="294" height="12"
+                                  halign="right"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall"
+                                  text_color="0.62 0.70 0.78 1.0" />
+                            <text layout="topleft" name="news4_title"
+                                  follows="left|right|top"
+                                  left="2" right="-4" top="312" height="16"
+                                  word_wrap="false"
+                                  use_ellipses="true"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="Small" font.style="BOLD"
+                                  text_color="1.0 1.0 1.0 1.0" />
+                            <text layout="topleft" name="news4_summary"
+                                  follows="left|right|top"
+                                  left="2" right="-4" top="334" height="36"
+                                  word_wrap="true"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall"
+                                  text_color="0.62 0.70 0.78 1.0" />
+                            <icon layout="topleft" name="news4_divider"
+                                  follows="left|right|top"
+                                  left="0" right="-1" top="376" height="1"
+                                  visible="false"
+                                  image_name="Divider_Line" mouse_opaque="false" />
+                            <text layout="topleft" name="news5_tag"
+                                  follows="left|top"
+                                  left="2" top="390" width="200" height="12"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                                  text_color="0.0 0.898 1.0 1.0" />
+                            <text layout="topleft" name="news5_date"
+                                  follows="right|top"
+                                  right="-28" width="90" top="390" height="12"
+                                  halign="right"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall"
+                                  text_color="0.62 0.70 0.78 1.0" />
+                            <text layout="topleft" name="news5_title"
+                                  follows="left|right|top"
+                                  left="2" right="-4" top="408" height="16"
+                                  word_wrap="false"
+                                  use_ellipses="true"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="Small" font.style="BOLD"
+                                  text_color="1.0 1.0 1.0 1.0" />
+                            <text layout="topleft" name="news5_summary"
+                                  follows="left|right|top"
+                                  left="2" right="-4" top="430" height="36"
+                                  word_wrap="true"
+                                  visible="false" value=""
+                                  font.name="SansSerif" font.size="LSmall"
+                                  text_color="0.62 0.70 0.78 1.0" />
+                            <icon layout="topleft" name="news5_divider"
+                                  follows="left|right|top"
+                                  left="0" right="-1" top="472" height="1"
+                                  visible="false"
+                                  image_name="Divider_Line" mouse_opaque="false" />
+                        </panel>
+                    </scroll_container>
+                </layout_panel>
+
+            </layout_stack>
+        </layout_panel>
+    </layout_stack>
+
+    <!-- 2. BOTTOM DOCK: anchored to the bottom, stretches with window width -->
+    <panel name="bottom_dock"
+           layout="bottomleft"
+           follows="left|right|bottom"
+           left="0" bottom="0" right="-1"
+           height="112"
+           background_visible="true"
+           background_opaque="true"
+           bg_opaque_color="0.024 0.051 0.086 1.0"
+           border_visible="false">
+
+        <!-- the thin line along the top edge of the dock -->
+        <panel name="dock_top_line"
+               layout="bottomleft"
+               follows="left|right|top"
+               left="0" right="-1" bottom="111" height="1"
+               background_visible="true"
+               background_opaque="true"
+               bg_opaque_color="0.098 0.129 0.165 1.0"
+               border_visible="false"
+               mouse_opaque="false" />
+
+        <!-- Horizontal stack: shares the width between the four cards.
+             16px margin on both sides, 15px from the bottom, 90px tall. -->
+        <layout_stack name="dock_stack"
+                      layout="bottomleft"
+                      follows="left|right|bottom"
+                      orientation="horizontal"
+                      left="8" right="-8"
+                      bottom="11" height="90"
+                      border_size="12"
+                      clip="false">
+
+            <!-- ACCOUNT PROFILE CARD -->
+            <layout_panel name="card_account"
+                          auto_resize="true"
+                          user_resize="false"
+                          width="352" min_width="220" height="90"
+                          background_visible="true"
+                          background_opaque="true"
+                          bg_opaque_image="Card_Round"
+                          bg_opaque_color="0.063 0.09 0.133 1.0"
+                          border_visible="false">
+                <text layout="topleft" name="account_label"
+                      follows="left|right|top"
+                      left="10" right="-10" top="10" height="12"
+                      value="ACCOUNT PROFILE"
+                      font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                      text_color="0.62 0.70 0.78 1.0" />
+                <check_box layout="topleft" name="remember_username_checkbox"
+                           follows="left|top"
+                           left="10" top="64" width="200" height="18"
+                           label="Remember Username"
+                           font.name="SansSerif" font.size="LSmall"
+                           initial_value="true"
+                           tab_stop="false">
+                    <check_box.label_text text_color="0.72 0.78 0.84 1.0" />
+                    <check_box.check_button
+                        chrome="true"
+                        tab_stop="false"
+                        image_unselected="Check_Off"
+                        image_hover_unselected="Check_Off_Hover"
+                        image_pressed="Check_Off_Hover"
+                        image_disabled="Check_Off"
+                        image_selected="Check_On"
+                        image_hover_selected="Check_On"
+                        image_pressed_selected="Check_On"
+                        image_disabled_selected="Check_On"
+                        image_color="1.0 1.0 1.0 1.0"
+                        image_color_disabled="0.5 0.5 0.5 1.0" />
+                </check_box>
+                <line_editor draw_focus_border="false" layout="topleft" name="username_edit"
+                             follows="left|right|top"
+                             left="10" right="-10" top="28" height="28"
+                             default_text="Username"
+                             max_length_bytes="128"
+                             text_pad_left="10"
+                             background_image="Field_Round"
+                             background_image_disabled="Field_Round"
+                             background_image_focused="Field_Round_Focus"
+                             text_color="0.90 0.94 0.97 1.0"
+                             text_readonly_color="0.90 0.94 0.97 1.0"
+                             cursor_color="0.0 0.898 1.0 1.0"
+                             highlight_color="0.0 0.60 0.70 1.0" />
+                <!-- Shown INSTEAD of the username box when more than one account has been saved -->
+                <combo_box layout="topleft" name="username_combo"
+                           visible="false"
+                           follows="left|right|top"
+                           left="10" right="-10" top="28" height="28"
+                           allow_text_entry="true"
+                           label="Username">
+                    <combo_box.combo_button draw_focus_border="false"
+                        chrome="true"
+                        image_unselected="Clear_Pixel"
+                        image_selected="Clear_Pixel"
+                        image_hover_unselected="Clear_Pixel"
+                        image_hover_selected="Clear_Pixel"
+                        image_pressed="Clear_Pixel"
+                        image_pressed_selected="Clear_Pixel"
+                        image_disabled="Clear_Pixel"
+                        image_color="1.0 1.0 1.0 1.0"
+                        hover_glow_amount="0.0" />
+                    <combo_box.combo_editor
+                        background_image="Field_Round"
+                        background_image_disabled="Field_Round"
+                        background_image_focused="Field_Round_Focus"
+                        draw_focus_border="false"
+                        text_pad_left="10"
+                        text_pad_right="34"
+                        text_color="0.90 0.94 0.97 1.0"
+                        text_readonly_color="0.90 0.94 0.97 1.0"
+                        cursor_color="0.0 0.898 1.0 1.0"
+                        highlight_color="0.0 0.60 0.70 1.0" />
+                    <combo_box.combo_list background_visible="true" bg_writeable_color="0.047 0.078 0.114 1.0" bg_readonly_color="0.047 0.078 0.114 1.0" bg_stripe_color="0.047 0.078 0.114 1.0" scroll_bar_bg_color="0.039 0.059 0.090 1.0" draw_stripes="false"
+                        bg_selected_color="0.0 0.60 0.70 1.0"
+                        hovered_color="0.0 0.30 0.37 1.0"
+                        highlighted_color="0.0 0.30 0.37 1.0"
+                        fg_unselected_color="0.90 0.94 0.97 1.0"
+                        fg_selected_color="0.0 0.05 0.08 1.0" />
+                </combo_box>
+                <icon layout="topleft" name="username_arrow"
+                      follows="right|top"
+                      visible="false"
+                      right="-16" width="16" top="34" height="16"
+                      image_name="Combo_Arrow" color="0.0 0.898 1.0 1.0"
+                      mouse_opaque="false" />
+            </layout_panel>
+
+            <!-- PASSWORD CARD -->
+            <layout_panel name="card_password"
+                          auto_resize="true"
+                          user_resize="false"
+                          width="352" min_width="220" height="90"
+                          background_visible="true"
+                          background_opaque="true"
+                          bg_opaque_image="Card_Round"
+                          bg_opaque_color="0.063 0.09 0.133 1.0"
+                          border_visible="false">
+                <text layout="topleft" name="password_label"
+                      follows="left|right|top"
+                      left="10" right="-10" top="10" height="12"
+                      value="PASSWORD"
+                      font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                      text_color="0.62 0.70 0.78 1.0" />
+                <line_editor draw_focus_border="false" layout="topleft" name="password_edit"
+                             follows="left|right|top"
+                             left="10" right="-10" top="28" height="28"
+                             is_password="true"
+                             text_pad_right="34"
+                             text_pad_left="10"
+                             background_image="Field_Round"
+                             background_image_disabled="Field_Round"
+                             background_image_focused="Field_Round_Focus"
+                             text_color="0.90 0.94 0.97 1.0"
+                             text_readonly_color="0.90 0.94 0.97 1.0"
+                             cursor_color="0.0 0.898 1.0 1.0"
+                             highlight_color="0.0 0.60 0.70 1.0"
+                             max_length_bytes="255" />
+                <!-- Two plain buttons on the same spot: the open eye (password hidden, click to show)
+                     and the slashed eye (password shown, click to hide). Only one is visible at a time. -->
+                <button layout="topleft" name="show_password_btn"
+                        chrome="true"
+                        tab_stop="false"
+                        follows="right|top"
+                        right="-12" width="24" top="30" height="24"
+                        label=""
+                        image_unselected="Password_Hide"
+                        image_selected="Password_Hide"
+                        image_hover_unselected="Password_Hide"
+                        image_hover_selected="Password_Hide"
+                        image_pressed="Password_Hide"
+                        image_pressed_selected="Password_Hide"
+                        image_color="1.0 1.0 1.0 0.85"
+                        hover_glow_amount="0.3" />
+                <button layout="topleft" name="hide_password_btn"
+                        chrome="true"
+                        tab_stop="false"
+                        follows="right|top"
+                        right="-12" width="24" top="30" height="24"
+                        visible="false"
+                        label=""
+                        image_unselected="Password_Show"
+                        image_selected="Password_Show"
+                        image_hover_unselected="Password_Show"
+                        image_hover_selected="Password_Show"
+                        image_pressed="Password_Show"
+                        image_pressed_selected="Password_Show"
+                        image_color="1.0 1.0 1.0 0.85"
+                        hover_glow_amount="0.3" />
+                <check_box layout="topleft" name="remember_check"
+                           follows="left|top"
+                           left="10" top="64" width="200" height="18"
+                           control_name="RememberPassword"
+                           label="Remember Password"
+                           font.name="SansSerif" font.size="LSmall"
+                           initial_value="true"
+                           tab_stop="false">
+                    <check_box.label_text text_color="0.72 0.78 0.84 1.0" />
+                    <check_box.check_button
+                        chrome="true"
+                        tab_stop="false"
+                        image_unselected="Check_Off"
+                        image_hover_unselected="Check_Off_Hover"
+                        image_pressed="Check_Off_Hover"
+                        image_disabled="Check_Off"
+                        image_selected="Check_On"
+                        image_hover_selected="Check_On"
+                        image_pressed_selected="Check_On"
+                        image_disabled_selected="Check_On"
+                        image_color="1.0 1.0 1.0 1.0"
+                        image_color_disabled="0.5 0.5 0.5 1.0" />
+                </check_box>
+            </layout_panel>
+
+            <!-- START LOCATION CARD (gets the most stretch) -->
+            <layout_panel name="card_location"
+                          auto_resize="true"
+                          user_resize="false"
+                          width="300" min_width="180" height="90"
+                          background_visible="true"
+                          background_opaque="true"
+                          bg_opaque_image="Card_Round"
+                          bg_opaque_color="0.063 0.09 0.133 1.0"
+                          border_visible="false">
+                <text layout="topleft" name="location_label"
+                      follows="left|right|top"
+                      left="10" right="-10" top="10" height="12"
+                      value="START LOCATION"
+                      font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                      text_color="0.62 0.70 0.78 1.0" />
+                <combo_box layout="topleft" name="start_location_combo"
+                           follows="left|right|top"
+                           control_name="LoginLocation"
+                           left="10" right="-10" top="28" height="28"
+                           allow_text_entry="false"
+                           label="Home">
+                    <combo_box.combo_button draw_focus_border="false"
+                        chrome="true"
+                        halign="left"
+                        pad_left="10"
+                        pad_right="26"
+                        label_color="0.90 0.94 0.97 1.0"
+                        label_color_selected="0.90 0.94 0.97 1.0"
+                        label_shadow="false"
+                        image_unselected="Field_Round"
+                        image_selected="Field_Round"
+                        image_hover_unselected="Field_Round_Focus"
+                        image_hover_selected="Field_Round_Focus"
+                        image_pressed="Field_Round_Focus"
+                        image_pressed_selected="Field_Round_Focus"
+                        image_disabled="Field_Round"
+                        image_color="1.0 1.0 1.0 1.0"
+                        hover_glow_amount="0.0" />
+                    <combo_box.drop_down_button draw_focus_border="false"
+                        halign="left"
+                        pad_left="10"
+                        pad_right="26"
+                        label_color="0.90 0.94 0.97 1.0"
+                        label_color_selected="0.90 0.94 0.97 1.0"
+                        label_shadow="false"
+                        image_unselected="Field_Round"
+                        image_selected="Field_Round"
+                        image_hover_unselected="Field_Round_Focus"
+                        image_hover_selected="Field_Round_Focus"
+                        image_pressed="Field_Round_Focus"
+                        image_pressed_selected="Field_Round_Focus"
+                        image_disabled="Field_Round"
+                        image_color="1.0 1.0 1.0 1.0"
+                        hover_glow_amount="0.0" />
+                    <combo_box.combo_list background_visible="true" bg_writeable_color="0.047 0.078 0.114 1.0" bg_readonly_color="0.047 0.078 0.114 1.0" bg_stripe_color="0.047 0.078 0.114 1.0" scroll_bar_bg_color="0.039 0.059 0.090 1.0" draw_stripes="false"
+                        bg_selected_color="0.0 0.60 0.70 1.0"
+                        hovered_color="0.0 0.30 0.37 1.0"
+                        highlighted_color="0.0 0.30 0.37 1.0"
+                        fg_unselected_color="0.90 0.94 0.97 1.0"
+                        fg_selected_color="0.0 0.05 0.08 1.0"
+                        fg_disable_color="0.0 0.898 1.0 1.0" />
+                    <combo_box.item label="Home" value="home" />
+                    <combo_box.item label="Last Location" value="last" />
+                    <combo_box.item label="Custom Region" value="CustomRegion" />
+                </combo_box>
+                <icon layout="topleft" name="start_location_arrow"
+                      follows="right|top"
+                      right="-16" width="16" top="34" height="16"
+                      image_name="Combo_Arrow" color="0.0 0.898 1.0 1.0"
+                      mouse_opaque="false" />
+                <!-- Shown INSTEAD of the drop-down while "Custom Region" is picked -->
+                <line_editor draw_focus_border="false" layout="topleft" name="region_edit"
+                             follows="left|right|top"
+                             visible="false"
+                             left="10" right="-10" top="28" height="28"
+                             max_length_bytes="128"
+                             text_pad_left="10"
+                             text_pad_right="30"
+                             background_image="Field_Round"
+                             background_image_disabled="Field_Round"
+                             background_image_focused="Field_Round_Focus"
+                             text_color="0.90 0.94 0.97 1.0"
+                             text_readonly_color="0.90 0.94 0.97 1.0"
+                             cursor_color="0.0 0.898 1.0 1.0"
+                             highlight_color="0.0 0.60 0.70 1.0" />
+                <text layout="topleft" name="region_placeholder"
+                      follows="left|right|top"
+                      visible="false"
+                      mouse_opaque="false"
+                      left="20" right="-34" top="36" height="14"
+                      use_ellipses="true"
+                      value="Region name, Region/X/Y/Z or SLURL"
+                      text_color="0.45 0.52 0.60 1.0" />
+                <button layout="topleft" name="region_arrow_btn"
+                        chrome="true"
+                        tab_stop="false"
+                        follows="right|top"
+                        visible="false"
+                        right="-16" width="16" top="34" height="16"
+                        label=""
+                        image_unselected="Combo_Arrow"
+                        image_selected="Combo_Arrow"
+                        image_hover_unselected="Combo_Arrow"
+                        image_hover_selected="Combo_Arrow"
+                        image_pressed="Combo_Arrow"
+                        image_pressed_selected="Combo_Arrow"
+                        image_color="0.0 0.898 1.0 1.0"
+                        hover_glow_amount="0.3" />
+            </layout_panel>
+
+            <!-- LAUNCH ACTION BLOCK (fixed width, never shrinks) -->
+            <layout_panel name="card_launch"
+                          auto_resize="false"
+                          user_resize="false"
+                          width="260" min_width="260" height="90"
+                          background_visible="false">
+                <button layout="topleft" name="connect_btn"
+                        chrome="true"
+                        tab_stop="false"
+                        follows="left|right|top"
+                        left="0" right="-1" top="6" height="46"
+                        label="LAUNCH into Second Life"
+                        font="SansSerifBold"
+                        halign="center" pad_left="0" pad_right="0" pad_bottom="0"
+                        label_color="0.0 0.05 0.08 1.0"
+                        label_color_selected="0.0 0.05 0.08 1.0"
+                        label_color_disabled="0.2 0.3 0.35 1.0"
+                        label_shadow="false"
+                        image_unselected="Launch_Gradient"
+                        image_selected="Launch_Gradient"
+                        image_hover_unselected="Launch_Gradient"
+                        image_hover_selected="Launch_Gradient"
+                        image_pressed="Launch_Gradient"
+                        image_pressed_selected="Launch_Gradient"
+                        image_disabled="Launch_Gradient"
+                        image_disabled_selected="Launch_Gradient"
+                        image_color="1.0 1.0 1.0 1.0"
+                        image_color_disabled="0.4 0.5 0.55 1.0"
+                        hover_glow_amount="0.2">
+                    <button.commit_callback function="Launcher.Launch" />
+                </button>
+
+                <!-- Two small links share the width equally -->
+                <layout_stack layout="topleft" name="launch_links_stack"
+                              follows="left|right|top"
+                              orientation="horizontal"
+                              left="0" right="-1" top="58" height="24"
+                              border_size="10">
+                    <layout_panel name="forgot_panel"
+                                  auto_resize="true"
+                                  user_resize="false"
+                                  width="125" min_width="100" height="24">
+                        <button layout="topleft" name="forgot_password_btn"
+                                follows="left|right|top"
+                                left="0" right="-1" top="0" height="24"
+                                label="Forgot Password?"
+                                label_color="0.72 0.78 0.84 1.0"
+                                label_color_selected="0.72 0.78 0.84 1.0"
+                                label_shadow="false"
+                                chrome="true"
+                                tab_stop="false"
+                                image_unselected="Field_Round"
+                                image_selected="Field_Round"
+                                image_hover_unselected="Field_Round_Focus"
+                                image_hover_selected="Field_Round_Focus"
+                                image_pressed="Field_Round_Focus"
+                                image_pressed_selected="Field_Round_Focus"
+                                image_color="1.0 1.0 1.0 1.0"
+                                hover_glow_amount="0.0"
+                                font.name="SansSerif" font.size="LSmall">
+                            <button.commit_callback function="Launcher.ForgotPassword" />
+                        </button>
+                    </layout_panel>
+                    <layout_panel name="create_panel"
+                                  auto_resize="true"
+                                  user_resize="false"
+                                  width="125" min_width="100" height="24">
+                        <button layout="topleft" name="create_account_btn"
+                                follows="left|right|top"
+                                left="0" right="-1" top="0" height="24"
+                                label="Create an Account"
+                                label_color="0.72 0.78 0.84 1.0"
+                                label_color_selected="0.72 0.78 0.84 1.0"
+                                label_shadow="false"
+                                chrome="true"
+                                tab_stop="false"
+                                image_unselected="Field_Round"
+                                image_selected="Field_Round"
+                                image_hover_unselected="Field_Round_Focus"
+                                image_hover_selected="Field_Round_Focus"
+                                image_pressed="Field_Round_Focus"
+                                image_pressed_selected="Field_Round_Focus"
+                                image_color="1.0 1.0 1.0 1.0"
+                                hover_glow_amount="0.0"
+                                font.name="SansSerif" font.size="LSmall">
+                            <button.commit_callback function="Launcher.CreateAccount" />
+                        </button>
+                    </layout_panel>
+                </layout_stack>
+            </layout_panel>
+
+        </layout_stack>
+    </panel>
+
+    <!-- 3. MULTI-FACTOR AUTHENTICATION SCREEN: covers everything under the title bar while the login asks for a code.
+         The card (610 x 430) is centered by the two stacks. Shown / hidden by lllauncherfloater.cpp. -->
+    <panel name="mfa_panel"
+           layout="bottomleft"
+           follows="all"
+           left="0" right="-1" top="-34" bottom="0"
+           visible="false"
+           background_visible="true"
+           background_opaque="true"
+           bg_opaque_color="0.047 0.078 0.114 1.0"
+           border_visible="false"
+           mouse_opaque="true">
+        <layout_stack name="mfa_hstack"
+                      follows="all"
+                      orientation="horizontal"
+                      left="0" right="-1" top="-1" bottom="0"
+                      border_size="0"
+                      clip="false">
+            <layout_panel name="mfa_hspace_left" auto_resize="true" user_resize="false"
+                          width="10" min_width="0" background_visible="false" />
+            <layout_panel name="mfa_hcenter" auto_resize="false" user_resize="false"
+                          width="610" min_width="610" background_visible="false">
+                <layout_stack name="mfa_vstack"
+                              follows="all"
+                              orientation="vertical"
+                              left="0" right="-1" top="-1" bottom="0"
+                              border_size="0"
+                              clip="false">
+                    <layout_panel name="mfa_vspace_top" auto_resize="true" user_resize="false"
+                                  height="10" min_height="0" background_visible="false" />
+                    <layout_panel name="mfa_card"
+                                  auto_resize="false" user_resize="false"
+                                  height="430" min_height="430"
+                                  background_visible="true"
+                                  background_opaque="true"
+                                  bg_opaque_image="Card_Round"
+                                  bg_opaque_color="0.063 0.09 0.133 1.0"
+                                  border_visible="false">
+                        <!-- header: shield box, name, subtitle -->
+                        <icon layout="topleft" name="mfa_logo_box" follows="left|top"
+                              left="26" top="24" width="46" height="46"
+                              image_name="Field_Round_Focus" mouse_opaque="false" />
+                        <icon layout="topleft" name="mfa_logo" follows="left|top"
+                              left="34" top="32" width="30" height="30"
+                              image_name="Hyena_Logo" mouse_opaque="false" />
+                        <text layout="topleft" name="mfa_brand" follows="left|top"
+                              left="84" top="29" width="300" height="16"
+                              value="PROJECT HYENA"
+                              font.name="SansSerif" font.size="Small" font.style="BOLD"
+                              text_color="0.90 0.94 0.97 1.0" />
+                        <text layout="topleft" name="mfa_brand_sub" follows="left|top"
+                              left="84" top="47" width="300" height="14"
+                              value="SECURE AUTHENTICATION"
+                              font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                              text_color="0.0 0.898 1.0 1.0" />
+                        <icon layout="topleft" name="mfa_divider_top" follows="left|right|top"
+                              left="26" right="-26" top="84" height="1"
+                              image_name="Divider_Line" mouse_opaque="false" />
+
+                        <!-- title and explanation -->
+                        <text layout="topleft" name="mfa_title" follows="left|right|top"
+                              left="26" right="-26" top="100" height="26"
+                              value="Multi-Factor Authentication"
+                              font.name="SansSerif" font.size="Large" font.style="BOLD"
+                              text_color="0.90 0.94 0.97 1.0" />
+                        <text layout="topleft" name="mfa_intro" follows="left|right|top"
+                              left="26" right="-26" top="132" height="32"
+                              word_wrap="true"
+                              value="To complete your login, enter the six-digit security code generated by your authenticator app."
+                              font.name="SansSerif" font.size="LSmall"
+                              text_color="0.72 0.78 0.84 1.0" />
+
+                        <!-- code field -->
+                        <text layout="topleft" name="mfa_code_label" follows="left|top"
+                              left="26" top="172" width="300" height="12"
+                              value="VERIFICATION CODE"
+                              font.name="SansSerif" font.size="LSmall" font.style="BOLD"
+                              text_color="0.62 0.70 0.78 1.0" />
+                        <icon layout="topleft" name="mfa_code_box" follows="left|right|top"
+                              left="26" right="-26" top="190" height="56"
+                              image_name="Tile_Round" mouse_opaque="false" />
+                        <line_editor layout="topleft" name="mfa_code_edit"
+                                     draw_focus_border="false"
+                                     follows="left|right|top"
+                                     left="40" right="-40" top="201" height="34"
+                                     default_text="Enter your six-digit code"
+                                     max_length_bytes="6"
+                                     prevalidate_callback="non_negative_s32"
+                                     text_pad_left="12"
+                                     background_image="Field_Round"
+                                     background_image_disabled="Field_Round"
+                                     background_image_focused="Field_Round_Focus"
+                                     text_color="0.90 0.94 0.97 1.0"
+                                     text_readonly_color="0.90 0.94 0.97 1.0"
+                                     cursor_color="0.0 0.898 1.0 1.0"
+                                     highlight_color="0.0 0.60 0.70 1.0" />
+                        <text layout="topleft" name="mfa_error" follows="left|right|top"
+                              left="26" right="-26" top="250" height="14"
+                              visible="false"
+                              value=""
+                              font.name="SansSerif" font.size="LSmall"
+                              text_color="1.0 0.45 0.45 1.0" />
+
+                        <check_box layout="topleft" name="mfa_remember_check"
+                                   follows="left|top"
+                                   left="26" top="270" width="400" height="18"
+                                   label="Remember this computer for 30 days"
+                                   font.name="SansSerif" font.size="LSmall"
+                                   initial_value="false"
+                                   tab_stop="false">
+                            <check_box.label_text text_color="0.72 0.78 0.84 1.0" />
+                            <check_box.check_button
+                                chrome="true"
+                                tab_stop="false"
+                                image_unselected="Check_Off"
+                                image_hover_unselected="Check_Off_Hover"
+                                image_pressed="Check_Off_Hover"
+                                image_disabled="Check_Off"
+                                image_selected="Check_On"
+                                image_hover_selected="Check_On"
+                                image_pressed_selected="Check_On"
+                                image_disabled_selected="Check_On"
+                                image_color="1.0 1.0 1.0 1.0"
+                                image_color_disabled="0.5 0.5 0.5 1.0" />
+                        </check_box>
+
+                        <!-- buttons -->
+                        <button layout="topleft" name="mfa_verify_btn"
+                                follows="left|top"
+                                left="26" width="272" top="300" height="44"
+                                label="VERIFY &amp; CONTINUE"
+                                halign="center" pad_left="0" pad_right="0" pad_bottom="0"
+                                label_color="0.0 0.05 0.08 1.0"
+                                label_color_selected="0.0 0.05 0.08 1.0"
+                                label_color_disabled="0.2 0.3 0.35 1.0"
+                                label_shadow="false"
+                                chrome="true" tab_stop="false"
+                                draw_focus_border="false"
+                                enabled="false"
+                                image_unselected="Button_Cyan" image_selected="Button_Cyan"
+                                image_hover_unselected="Button_Cyan" image_hover_selected="Button_Cyan"
+                                image_pressed="Button_Cyan" image_pressed_selected="Button_Cyan"
+                                image_disabled="Button_Cyan" image_disabled_selected="Button_Cyan"
+                                image_color="1.0 1.0 1.0 1.0"
+                                image_color_disabled="0.4 0.5 0.55 1.0"
+                                hover_glow_amount="0.2"
+                                font.name="SansSerif" font.size="LSmall" font.style="BOLD">
+                        </button>
+                        <button layout="topleft" name="mfa_cancel_btn"
+                                follows="right|top"
+                                right="-26" width="272" top="300" height="44"
+                                label="CANCEL"
+                                halign="center" pad_left="0" pad_right="0" pad_bottom="0"
+                                label_color="0.90 0.94 0.97 1.0"
+                                label_color_selected="0.90 0.94 0.97 1.0"
+                                label_shadow="false"
+                                chrome="true" tab_stop="false"
+                                draw_focus_border="false"
+                                image_unselected="Field_Round" image_selected="Field_Round"
+                                image_hover_unselected="Field_Round_Focus" image_hover_selected="Field_Round_Focus"
+                                image_pressed="Field_Round_Focus" image_pressed_selected="Field_Round_Focus"
+                                image_color="1.0 1.0 1.0 1.0"
+                                hover_glow_amount="0.0" 
+                                font.name="SansSerif" font.size="LSmall" font.style="BOLD">
+                        </button>
+
+                        <!-- support -->
+                        <icon layout="topleft" name="mfa_divider_bottom" follows="left|right|top"
+                              left="26" right="-26" top="360" height="1"
+                              image_name="Divider_Line" mouse_opaque="false" />
+                        <text layout="topleft" name="mfa_support_text" follows="left|right|top"
+                              left="26" right="-26" top="372" height="14"
+                              value="If you believe this is an error, please contact Second Life Support for additional assistance."
+                              font.name="SansSerif" font.size="LSmall"
+                              text_color="0.72 0.78 0.84 1.0" />
+                        <button layout="topleft" name="mfa_support_btn"
+                                follows="left|top"
+                                left="26" width="160" top="392" height="18"
+                                label="Second Life Support"
+                                halign="left" pad_left="0" pad_right="0"
+                                label_color="0.0 0.898 1.0 1.0"
+                                label_color_selected="0.0 0.898 1.0 1.0"
+                                label_shadow="false"
+                                chrome="true" tab_stop="false"
+                                draw_focus_border="false"
+                                image_unselected="Clear_Pixel" image_selected="Clear_Pixel"
+                                image_hover_unselected="Clear_Pixel" image_hover_selected="Clear_Pixel"
+                                image_pressed="Clear_Pixel" image_pressed_selected="Clear_Pixel"
+                                hover_glow_amount="0.0"
+                                font.name="SansSerif" font.size="LSmall">
+                        </button>
+                    </layout_panel>
+                    <layout_panel name="mfa_vspace_bottom" auto_resize="true" user_resize="false"
+                                  height="10" min_height="0" background_visible="false" />
+                </layout_stack>
+            </layout_panel>
+            <layout_panel name="mfa_hspace_right" auto_resize="true" user_resize="false"
+                          width="10" min_width="0" background_visible="false" />
+        </layout_stack>
+    </panel>
+</hyena_launcher>

@@ -217,6 +217,16 @@ set_target_properties(
     firestorm-bin PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "..\\..\\indra\\newview")
 
+# ProjectHyena: show the launcher XML in the Visual Studio Solution Explorer
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/newview/skins/default/xui/en/floater_hyena_launcher.xml)
+  target_sources(firestorm-bin PRIVATE
+    newview/skins/default/xui/en/floater_hyena_launcher.xml
+  )
+  source_group("XUI Files" FILES
+    newview/skins/default/xui/en/floater_hyena_launcher.xml
+  )
+endif ()
+
 add_subdirectory(${VIEWER_PREFIX}doxygen EXCLUDE_FROM_ALL)
 
 # sets the 'startup project' for debugging from visual studio.
@@ -230,4 +240,3 @@ if (LL_TESTS)
   # individual apps can add themselves as dependencies
   add_subdirectory(${INTEGRATION_TESTS_PREFIX}integration_tests)
 endif (LL_TESTS)
-

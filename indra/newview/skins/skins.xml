@@ -2,6 +2,22 @@
   <array>
     <map>
       <key>name</key>
+      <string>Project Hyena</string>
+      <key>folder</key>
+      <string>hyena</string>
+      <key>themes</key>
+      <array>
+        <map>
+          <key>name</key>
+          <string>Hyena</string>
+          <key>folder</key>
+          <string/>
+        </map>
+      </array>
+    </map>
+
+    <map>
+      <key>name</key>
       <string>AnsaStorm</string>
       <key>folder</key>
       <string>ansastorm</string>

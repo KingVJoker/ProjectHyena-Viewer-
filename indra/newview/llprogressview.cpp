@@ -1,28 +1,28 @@
 /**
- * @file llprogressview.cpp
- * @brief LLProgressView class implementation
- *
- * $LicenseInfo:firstyear=2002&license=viewerlgpl$
- * Second Life Viewer Source Code
- * Copyright (C) 2010, Linden Research, Inc.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation;
- * version 2.1 of the License only.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
- * $/LicenseInfo$
- */
+* @file llprogressview.cpp
+* @brief LLProgressView class implementation
+*
+* $LicenseInfo:firstyear=2002&license=viewerlgpl$
+* Second Life Viewer Source Code
+* Copyright (C) 2010, Linden Research, Inc.
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation;
+* version 2.1 of the License only.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*
+* Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
+* $/LicenseInfo$
+*/
 
 #include "llviewerprecompiledheaders.h"
 
@@ -117,7 +117,7 @@ void LLProgressViewMini::onCancelButtonClicked(void* dummy)
 
 // XUI: Translate
 LLProgressView::LLProgressView()
-:   LLPanel(),
+    :   LLPanel(),
     mPercentDone( 0.f ),
     mMediaCtrl( NULL ),
     mMouseDownInActiveArea( false ),
@@ -206,8 +206,8 @@ void LLProgressView::revealIntroPanel()
     // if user hasn't yet seen intro video
     std::string intro_url = gSavedSettings.getString("PostFirstLoginIntroURL");
     if ( intro_url.length() > 0 &&
-            gSavedSettings.getBOOL("BrowserJavascriptEnabled") &&
-            !gSavedSettings.getBOOL("PostFirstLoginIntroViewed"))
+        gSavedSettings.getBOOL("BrowserJavascriptEnabled") &&
+        !gSavedSettings.getBOOL("PostFirstLoginIntroViewed"))
     {
         // hide the progress bar
         getChild<LLView>("stack1")->setVisible(false);
@@ -332,14 +332,14 @@ void LLProgressView::drawLogos(F32 alpha)
     for (; iter != end; iter++)
     {
         gl_draw_scaled_image_with_border(iter->mDrawRect.mLeft + offset_x,
-                             iter->mDrawRect.mBottom + offset_y,
-                             iter->mDrawRect.getWidth(),
-                             iter->mDrawRect.getHeight(),
-                             iter->mTexturep.get(),
-                             UI_VERTEX_COLOR % alpha,
-                             false,
-                             iter->mClipRect,
-                             iter->mOffsetRect);
+            iter->mDrawRect.mBottom + offset_y,
+            iter->mDrawRect.getWidth(),
+            iter->mDrawRect.getHeight(),
+            iter->mTexturep.get(),
+            UI_VERTEX_COLOR % alpha,
+            false,
+            iter->mClipRect,
+            iter->mOffsetRect);
     }
 }
 
@@ -433,6 +433,11 @@ void LLProgressView::setPercent(const F32 percent)
 
 void LLProgressView::setMessage(const std::string& msg)
 {
+    // Project Hyena: no Firestorm/MOTD announcement text on the loading screens
+    mMessage.clear();
+    mMessageText->setValue(std::string());
+    mLayoutMOTD->setVisible(false);
+    return;
     mMessage = msg;
     mMessageText->setValue(mMessage);
     S32 height = mMessageText->getTextPixelHeight();
@@ -450,10 +455,10 @@ void LLProgressView::setMessage(const std::string& msg)
 }
 
 void LLProgressView::loadLogo(const std::string &path,
-                              const U8 image_codec,
-                              const LLRect &pos_rect,
-                              const LLRectf &clip_rect,
-                              const LLRectf &offset_rect)
+    const U8 image_codec,
+    const LLRect &pos_rect,
+    const LLRectf &clip_rect,
+    const LLRectf &offset_rect)
 {
     // We need these images very early, so we have to force-load them, otherwise they might not load in time.
     if (!gDirUtilp->fileExists(path))
@@ -628,8 +633,10 @@ void LLProgressView::initTextures(S32 location_id, bool is_in_production)
     initStartTexture(location_id, is_in_production);
     initLogos();
 
-    childSetVisible("panel_icons", !mLogosList.empty());
-    childSetVisible("panel_top_spacer", mLogosList.empty());
+    // Project Hyena: never show the "[APP_NAME] uses" logo strip on the loading screens
+    mLogosList.clear();
+    childSetVisible("panel_icons", false);
+    childSetVisible("panel_top_spacer", true);
 }
 
 void LLProgressView::releaseTextures()

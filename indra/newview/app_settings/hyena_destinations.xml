@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<llsd>
+    <map>
+        <key>featured</key>
+        <array>
+            <map>
+                <key>tag</key>
+                <string>MUSIC CLUB</string>
+                <key>name</key>
+                <string>Big Daddy's Music Club</string>
+                <key>title</key>
+                <string>Big Daddy's Music Club</string>
+                <key>region</key>
+                <string>Big Daddys World</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/BIG%20DADDYS%20WORLD/91/130/25</string>
+                <key>description</key>
+                <string>Friendly romance club with dancing, a dance mall, shopping, rentals and games. Live DJs and events with pop, rock, top 40, 70s, 80s, 90s and country tunes. Now hiring.</string>
+                <key>avatars</key>
+                <string></string>
+                <key>notes</key>
+                <string>No child or teen avatars</string>
+                <key>badge</key>
+                <string>MUSIC CLUB</string>
+                <key>picture</key>
+                <string>BIGDADDY_S_MUSIC_CLUB.jpg</string>
+            </map>
+            <map>
+                <key>tag</key>
+                <string>MUSIC &amp; RADIO</string>
+                <key>name</key>
+                <string>Muddy's Music Cafe &amp; Radio</string>
+                <key>title</key>
+                <string>Muddy's Music Cafe &amp; Radio</string>
+                <key>region</key>
+                <string>Muddys Music Cafe</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/Muddys%20Music%20Cafe/104/123/22</string>
+                <key>description</key>
+                <string>PG music club with the best in current dance, top 40 and 70s, 80s and 90s. Soft rock, pop and country crossover with live DJs. Dancing, hangout, dating, shopping and Halloween fun. No blues dancing.</string>
+                <key>avatars</key>
+                <string></string>
+                <key>notes</key>
+                <string>PG rated</string>
+                <key>badge</key>
+                <string>MUSIC &amp; RADIO</string>
+                <key>picture</key>
+                <string>Muddy_s_Music_Cafe_Radio.jpg</string>
+            </map>
+            <map>
+                <key>tag</key>
+                <string>Backdrop</string>
+                <key>name</key>
+                <string>Backdrop City</string>
+                <key>title</key>
+                <string>Backdrop City</string>
+                <key>region</key>
+                <string>Backdrop City</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/Backdrop%20City/125/155/25</string>
+                <key>description</key>
+                <string> There is a sandbox area with a 4 hour return, along with hundreds of backdrops and scenes to use for photographers and bloggers. You can also join the free group to have access to the exclusive region with even more backdrops and updates.</string>
+                <key>avatars</key>
+                <string>6 Avatars</string>
+                <key>notes</key>
+                <string></string>
+                <key>badge</key>
+                <string>Backdrop and Pic</string>
+                <key>picture</key>
+                <string>Backdrop_City.jpg</string>
+            </map>
+        </array>
+        <key>popular</key>
+        <array>
+            <map>
+                <key>tag</key>
+                <string>SHOPPING</string>
+                <key>name</key>
+                <string>VELOUR MALL</string>
+                <key>title</key>
+                <string>VELOUR MALL</string>
+                <key>region</key>
+                <string>VELOUR</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/VELOUR/86/125/84</string>
+                <key>description</key>
+                <string>A mall with many stores for male and female clothing from many designer.</string>
+                <key>avatars</key>
+                <string>64 Avatars</string>
+                <key>notes</key>
+                <string>Busy</string>
+                <key>badge</key>
+                <string>TOP SPOT</string>
+                <key>picture</key>
+                <string>VELOUR_MALL.jpg</string>
+            </map>
+            <map>
+                <key>tag</key>
+                <string>SOCIAL/GAMES</string>
+                <key>name</key>
+                <string>QQ TnT Greedy Greedy Games Club</string>
+                <key>title</key>
+                <string>QQ TnT Greedy Greedy Games Club</string>
+                <key>region</key>
+                <string>Tangna</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/Tangna/212/162/73</string>
+                <key>description</key>
+                <string>A sim with alot of games from many Tabletop and board games. </string>
+                <key>avatars</key>
+                <string>41 Avatars</string>
+                <key>notes</key>
+                <string>Family Friendly </string>
+                <key>badge</key>
+                <string>TOP SPOT</string>
+                <key>picture</key>
+                <string>QQ_TnT_Greedy_Greedy_Games_Club.jpg</string>
+            </map>
+            <map>
+                <key>tag</key>
+                <string>ADVENTURE</string>
+                <key>name</key>
+                <string>PALAZZO PARK</string>
+                <key>title</key>
+                <string>PALAZZO PARK</string>
+                <key>region</key>
+                <string>Popstar</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/Popstar/70/246/2217</string>
+                <key>description</key>
+                <string>ULTIMATE Interactive Amusement Fun Park &amp; Entertainment Venue! Bowling,Laser Tag,Bumper Cars,Arcade, Tennis, Golf, WaterPark and many more.</string>
+                <key>avatars</key>
+                <string>33 Avatars</string>
+                <key>notes</key>
+                <string>Games</string>
+                <key>badge</key>
+                <string>TOP SPOT</string>
+                <key>picture</key>
+                <string>PALAZZO PARK</string>
+            </map>
+        </array>
+        <key>editors</key>
+        <array>
+            <map>
+                <key>tag</key>
+                <string>HYENA CURATED</string>
+                <key>name</key>
+                <string>Center for the Arts</string>
+                <key>title</key>
+                <string>Center for the Arts</string>
+                <key>region</key>
+                <string>Waterstone</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/Waterstone/213/189/25</string>
+                <key>description</key>
+                <string>Center for the Arts its a Non Profit Organization dedicated to art, building the bridge between worlds. Art Gallery, Art Cafe, Photography, Music, Performing Arts</string>
+                <key>avatars</key>
+                <string>14 Avatars</string>
+                <key>notes</key>
+                <string>Art gallery</string>
+                <key>badge</key>
+                <string>HYENA CURATED</string>
+                <key>picture</key>
+                <string>Center for the Arts</string>
+            </map>
+            <map>
+                <key>tag</key>
+                <string>HYENA CURATED</string>
+                <key>name</key>
+                <string>Kanaloa Surf Beach</string>
+                <key>title</key>
+                <string>Kanaloa Surf Beach</string>
+                <key>region</key>
+                <string>Poison apple</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/Poison%20Apple/164/16/25</string>
+                <key>description</key>
+                <string> Aloha!Welcome to Kanaloa Beach. We hope you enjoy your stay with us! Do feel free to explore and make use of the amenities provided. kanaloa beach is a surfing ..paradise.couple dance, romantic moments with someone special.</string>
+                <key>avatars</key>
+                <string>19 Avatars</string>
+                <key>notes</key>
+                <string>Beach</string>
+                <key>badge</key>
+                <string>HYENA CURATED</string>
+                <key>picture</key>
+                <string>Kanaloa Surf Beach</string>
+            </map>
+            <map>
+                <key>tag</key>
+                <string>HYENA CURATED</string>
+                <key>name</key>
+                <string>[EC:A&amp;D] - Eternal Conflict: Angels &amp; Demons</string>
+                <key>title</key>
+                <string>[EC:A&amp;D] - Eternal Conflict: Angels &amp; Demons</string>
+                <key>region</key>
+                <string>Eternal Conflict</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/Eternal%20Conflict/139/162/23</string>
+                <key>description</key>
+                <string>roleplay role play angel and demon mmo rpg game system with event, combat, heaven &amp; hell hangout, shopping</string>
+                <key>avatars</key>
+                <string>9 Avatars</string>
+                <key>notes</key>
+                <string>Role Play and Fighting</string>
+                <key>badge</key>
+                <string>HYENA CURATED</string>
+                <key>picture</key>
+                <string>Eternal Conflict</string>
+            </map>
+        </array>
+        <key>newcomer</key>
+        <array>
+            <map>
+                <key>tag</key>
+                <string>WELCOME</string>
+                <key>name</key>
+                <string>Sandbox Welcome Area</string>
+                <key>title</key>
+                <string>Sandbox Welcome Area</string>
+                <key>region</key>
+                <string> WelcomeHubSandbox</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/WelcomeHubSandbox/74/78/25</string>
+                <key>description</key>
+                <string>Ready to create? Visit the Sandbox and learn to build in Second Life! Whether it's a small gadget or a dream mansion, your imagination is the only limit.</string>
+                <key>avatars</key>
+                <string>46 Avatars</string>
+                <key>notes</key>
+                <string>Sandbox</string>
+                <key>badge</key>
+                <string>NEWCOMER FRIENDLY</string>
+                <key>picture</key>
+                <string>Sandbox Welcome Area</string>
+            </map>
+            <map>
+                <key>tag</key>
+                <string>COMMUNITY</string>
+                <key>name</key>
+                <string>Luskwood</string>
+                <key>title</key>
+                <string>Luskwood</string>
+                <key>region</key>
+                <string>Lusk</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/Lusk/217/168/62</string>
+                <key>description</key>
+                <string>Luskwood Creatures, SL's Original Furry Avatars, Since 2003. We are Second Life's longest-running community and avatar creators. A social chat hangout area in a forest setting; Run by furries - but NOT furry only! ANYONE is welcome!</string>
+                <key>avatars</key>
+                <string>27 Avatars</string>
+                <key>notes</key>
+                <string>Beginner Safe</string>
+                <key>badge</key>
+                <string>NEWCOMER FRIENDLY</string>
+                <key>picture</key>
+                <string>Luskwood</string>
+            </map>
+            <map>
+                <key>tag</key>
+                <string>LEARNING</string>
+                <key>name</key>
+                <string>Builders Brewery</string>
+                <key>title</key>
+                <string>Builders Brewery SANDBOX</string>
+                <key>region</key>
+                <string>Builders Brewery SANDBOX</string>
+                <key>slurl</key>
+                <string>https://maps.secondlife.com/secondlife/Builders%20Brewery%20Sandbox/195/17/26</string>
+                <key>description</key>
+                <string>Creator-Focused, Full Sim, No Auto-Return til 1-hour AFTER you leave (run to the store?) Peaceful Platforms, Free Building Classes, Mesh Academy, Blender, Gimp, Terraforming, Textures, Scripts, Templates, Tutorials.Training, learn to build, sand box</string>
+                <key>avatars</key>
+                <string>21 Avatars</string>
+                <key>notes</key>
+                <string>Classes</string>
+                <key>badge</key>
+                <string>NEWCOMER FRIENDLY</string>
+                <key>picture</key>
+                <string>Builders Brewery</string>
+            </map>
+        </array>
+    </map>
+</llsd>

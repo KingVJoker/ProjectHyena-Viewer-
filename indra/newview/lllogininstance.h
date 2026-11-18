@@ -1,28 +1,28 @@
 /**
- * @file lllogininstance.h
- * @brief A host for the viewer's login connection.
- *
- * $LicenseInfo:firstyear=2009&license=viewerlgpl$
- * Second Life Viewer Source Code
- * Copyright (C) 2010, Linden Research, Inc.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation;
- * version 2.1 of the License only.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
- * $/LicenseInfo$
- */
+* @file lllogininstance.h
+* @brief A host for the viewer's login connection.
+*
+* $LicenseInfo:firstyear=2009&license=viewerlgpl$
+* Second Life Viewer Source Code
+* Copyright (C) 2010, Linden Research, Inc.
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation;
+* version 2.1 of the License only.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*
+* Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
+* $/LicenseInfo$
+*/
 
 #ifndef LL_LLLOGININSTANCE_H
 #define LL_LLLOGININSTANCE_H
@@ -55,9 +55,9 @@ public:
     bool saveMFA() const { return mSaveMFA; }
     LLSD getResponse(const std::string& key) { return getResponse()[key]; }
     LLSD getResponse();
-// <FS:AW various patches>
+    // <FS:AW various patches>
     bool hasResponse(const std::string& key) { return mResponseData.has(key); }
-// </FS:AW various patches>
+    // </FS:AW various patches>
 
     // Only valid when authSuccess == true.
     const F64 getLastTransferRateBPS() { return mTransferRate; }
@@ -71,6 +71,10 @@ public:
     LLNotificationsInterface& getNotificationsInterface() const { return *mNotifications; }
 
     void saveMFAHash(LLSD const& response);
+
+    // ProjectHyena: submit an MFA response received from the launcher
+    void submitExternalMFAResponse(const std::string& token, bool remember);
+    void cancelExternalMFA(); // ProjectHyena: user cancelled the launcher MFA screen
 
 private:
     void constructAuthParams(LLPointer<LLCredential> user_credentials);
@@ -93,7 +97,7 @@ private:
 
     std::string mLoginState;
     LLSD mRequestData;
-    LLSD mResponseData;
+    LLSD mResponseData; 
     bool mAttemptComplete;
     bool mSaveMFA;
     F64 mTransferRate;
@@ -105,6 +109,7 @@ private:
     std::string mPlatformVersion;
     std::string mPlatformVersionName;
     LLEventDispatcher mDispatcher;
+    bool mExternalMFAChallengePending = false; // ProjectHyena
 };
 
 #endif

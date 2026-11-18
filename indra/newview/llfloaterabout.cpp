@@ -1,29 +1,29 @@
 /**
- * @file llfloaterabout.cpp
- * @author James Cook
- * @brief The about box from Help->About
- *
- * $LicenseInfo:firstyear=2001&license=viewerlgpl$
- * Second Life Viewer Source Code
- * Copyright (C) 2010, Linden Research, Inc.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation;
- * version 2.1 of the License only.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
- * $/LicenseInfo$
- */
+* @file llfloaterabout.cpp
+* @author James Cook
+* @brief The about box from Help->About
+*
+* $LicenseInfo:firstyear=2001&license=viewerlgpl$
+* Second Life Viewer Source Code
+* Copyright (C) 2010, Linden Research, Inc.
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation;
+* version 2.1 of the License only.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*
+* Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
+* $/LicenseInfo$
+*/
 
 #include "llviewerprecompiledheaders.h"
 #include <iostream>
@@ -92,8 +92,8 @@ public:
     void onClickUpdateCheck();
     static void setUpdateListener();
 
-// <FS:Ansariel> Release notes link not updating
-//private:
+    // <FS:Ansariel> Release notes link not updating
+    //private:
     void setSupportText(const std::string& server_release_notes_url);
 
     // notifications for user requested checks
@@ -113,7 +113,7 @@ public:
 
 // Default constructor
 LLFloaterAbout::LLFloaterAbout(const LLSD& key)
-:   LLFloater(key)
+    :   LLFloater(key)
 {
 
 }
@@ -192,7 +192,7 @@ bool LLFloaterAbout::postBuild()
         while ( std::getline(licenses_file, license_line) )
         {
             licenses_widget->appendText(license_line+"\n", false,
-                                        LLStyle::Params() .color(about_color));
+                LLStyle::Params() .color(about_color));
         }
         licenses_file.close();
     }
@@ -288,7 +288,7 @@ class LLFloaterAboutListener: public LLEventAPI
 public:
     LLFloaterAboutListener():
         LLEventAPI("LLFloaterAbout",
-                   "LLFloaterAbout listener to retrieve About box info")
+            "LLFloaterAbout listener to retrieve About box info")
     {
         add("getInfo",
             "Request an LLSD::Map containing information used to populate About box",
@@ -339,7 +339,7 @@ void LLFloaterAbout::setSupportText(const std::string& server_release_notes_url)
     LLUIColor about_color = LLUIColorTable::instance().getColor("TextFgReadOnlyColor");
     support_widget->clear();
     support_widget->appendText(LLAppViewer::instance()->getViewerInfoString(),
-                               false, LLStyle::Params() .color(about_color));
+        false, LLStyle::Params() .color(about_color));
 }
 
 //This is bound as a callback in postBuild()
@@ -443,4 +443,3 @@ void LLFloaterAboutUtil::checkUpdatesAndNotify()
 {
     LLFloaterAbout::setUpdateListener();
 }
-

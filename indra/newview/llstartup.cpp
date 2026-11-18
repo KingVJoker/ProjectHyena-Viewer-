@@ -1,28 +1,28 @@
 /**
- * @file llstartup.cpp
- * @brief startup routines.
- *
- * $LicenseInfo:firstyear=2004&license=viewerlgpl$
- * Second Life Viewer Source Code
- * Copyright (C) 2010, Linden Research, Inc.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation;
- * version 2.1 of the License only.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
- * $/LicenseInfo$
- */
+* @file llstartup.cpp
+* @brief startup routines.
+*
+* $LicenseInfo:firstyear=2004&license=viewerlgpl$
+* Second Life Viewer Source Code
+* Copyright (C) 2010, Linden Research, Inc.
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation;
+* version 2.1 of the License only.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*
+* Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
+* $/LicenseInfo$
+*/
 
 #include "llviewerprecompiledheaders.h"
 
@@ -204,6 +204,9 @@
 #include "llappearancemgr.h"
 #include "llavatariconctrl.h"
 #include "llvoicechannel.h"
+#include "lllauncherfloater.h" // ProjectHyena
+#include "hyenapipeclient.h"   // ProjectHyena
+#include "llrootview.h"
 #include "llpathfindingmanager.h"
 #include "llremoteparcelrequest.h"
 // [RLVa:KB] - Checked: RLVa-1.2.0
@@ -394,7 +397,7 @@ void do_startup_frame()
         }
         if (needs_drain || gMessageSystem->mPacketRing.getNumBufferedPackets() > 0)
         {
-             gMessageSystem->drainUdpSocket();
+            gMessageSystem->drainUdpSocket();
         }
         lmc.processAcks();
     }
@@ -464,7 +467,7 @@ void downloadGridlistError( LLSD const &aData, std::string const &aURL )
     sGridListRequestReady = true;
 }
 
- void downloadGridstatusComplete(LLSD const &aData)
+void downloadGridstatusComplete(LLSD const &aData)
 {
     LLSD header = aData[ LLCoreHttpUtil::HttpCoroutineAdapter::HTTP_RESULTS ][ LLCoreHttpUtil::HttpCoroutineAdapter::HTTP_RESULTS_HEADERS];
     const LLSD::Binary &rawData = aData[LLCoreHttpUtil::HttpCoroutineAdapter::HTTP_RESULTS_RAW].asBinary();
@@ -674,10 +677,10 @@ bool idle_startup()
     static std::string auth_desc;
     static std::string auth_message;
 
-// <FS:CR> Aurora Sim
+    // <FS:CR> Aurora Sim
     static U32 first_sim_size_x = 256;
     static U32 first_sim_size_y = 256;
-// </FS:CR> Aurora Sim
+    // </FS:CR> Aurora Sim
     static LLVector3 agent_start_position_region(10.f, 10.f, 10.f);     // default for when no space server
 
     // last location by default
@@ -805,7 +808,7 @@ bool idle_startup()
             LLNotificationsUtil::add("DisplaySetToSafe");
         }
         else if ((gSavedSettings.getS32("LastFeatureVersion") < LLFeatureManager::getInstance()->getVersion()) &&
-                 (gSavedSettings.getS32("LastFeatureVersion") != 0))
+            (gSavedSettings.getS32("LastFeatureVersion") != 0))
         {
             LLNotificationsUtil::add("DisplaySetToRecommendedFeatureChange");
         }
@@ -878,26 +881,26 @@ bool idle_startup()
         LLFILE* found_template = NULL;
         found_template = LLFile::fopen(message_template_path, "r");     /* Flawfinder: ignore */
 
-        #if LL_WINDOWS
-            // On the windows dev builds, unpackaged, the message_template.msg
-            // file will be located in:
-            // build-vc**/newview/<config>/app_settings
-            if (!found_template)
-            {
-                message_template_path = gDirUtilp->getExpandedFilename(LL_PATH_EXECUTABLE, "app_settings", "message_template.msg");
-                found_template = LLFile::fopen(message_template_path.c_str(), "r");     /* Flawfinder: ignore */
-            }
-        #elif LL_DARWIN
-            // On Mac dev builds, message_template.msg lives in:
-            // indra/build-*/newview/<config>/Second Life/Contents/Resources/app_settings
-            if (!found_template)
-            {
-                message_template_path =
-                    gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,
-                                                   "message_template.msg");
-                found_template = LLFile::fopen(message_template_path.c_str(), "r");     /* Flawfinder: ignore */
-            }
-        #endif
+#if LL_WINDOWS
+        // On the windows dev builds, unpackaged, the message_template.msg
+        // file will be located in:
+        // build-vc**/newview/<config>/app_settings
+        if (!found_template)
+        {
+            message_template_path = gDirUtilp->getExpandedFilename(LL_PATH_EXECUTABLE, "app_settings", "message_template.msg");
+            found_template = LLFile::fopen(message_template_path.c_str(), "r");     /* Flawfinder: ignore */
+        }
+#elif LL_DARWIN
+        // On Mac dev builds, message_template.msg lives in:
+        // indra/build-*/newview/<config>/Second Life/Contents/Resources/app_settings
+        if (!found_template)
+        {
+            message_template_path =
+                gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,
+                    "message_template.msg");
+            found_template = LLFile::fopen(message_template_path.c_str(), "r");     /* Flawfinder: ignore */
+        }
+#endif
 
         if (found_template)
         {
@@ -907,9 +910,9 @@ bool idle_startup()
 
             if ((NET_USE_OS_ASSIGNED_PORT == port) &&   // if nothing specified on command line (-port)
                 (gSavedSettings.getBOOL("ConnectionPortEnabled")))
-              {
+            {
                 port = gSavedSettings.getU32("ConnectionPort");
-              }
+            }
 
             // TODO parameterize
             const F32 circuit_heartbeat_interval = 5;
@@ -919,39 +922,39 @@ bool idle_startup()
             bool failure_is_fatal = true;
 
             if(!start_messaging_system(
-                   message_template_path,
-                   port,
-                   LLVersionInfo::instance().getMajor(),
-                   LLVersionInfo::instance().getMinor(),
-                   LLVersionInfo::instance().getPatch(),
-                   false,
-                   std::string(),
-                   responder,
-                   failure_is_fatal,
-                   circuit_heartbeat_interval,
-                   circuit_timeout))
+                message_template_path,
+                port,
+                LLVersionInfo::instance().getMajor(),
+                LLVersionInfo::instance().getMinor(),
+                LLVersionInfo::instance().getPatch(),
+                false,
+                std::string(),
+                responder,
+                failure_is_fatal,
+                circuit_heartbeat_interval,
+                circuit_timeout))
             {
                 std::string diagnostic = llformat(" Error: %d", gMessageSystem->getErrorCode());
                 LL_WARNS("AppInit") << diagnostic << LL_ENDL;
                 LLAppViewer::instance()->earlyExit("LoginFailedNoNetwork", LLSD().with("DIAGNOSTIC", diagnostic));
             }
 
-            #if LL_WINDOWS
-                // On the windows dev builds, unpackaged, the message.xml file will
-                // be located in indra/build-vc**/newview/<config>/app_settings.
-                std::string message_path = gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,"message.xml");
+#if LL_WINDOWS
+            // On the windows dev builds, unpackaged, the message.xml file will
+            // be located in indra/build-vc**/newview/<config>/app_settings.
+            std::string message_path = gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,"message.xml");
 
-                if (!LLFile::isfile(message_path.c_str()))
-                {
-                    LLMessageConfig::initClass("viewer", gDirUtilp->getExpandedFilename(LL_PATH_EXECUTABLE, "app_settings", ""));
-                }
-                else
-                {
-                    LLMessageConfig::initClass("viewer", gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, ""));
-                }
-            #else
+            if (!LLFile::isfile(message_path.c_str()))
+            {
+                LLMessageConfig::initClass("viewer", gDirUtilp->getExpandedFilename(LL_PATH_EXECUTABLE, "app_settings", ""));
+            }
+            else
+            {
                 LLMessageConfig::initClass("viewer", gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, ""));
-            #endif
+            }
+#else
+            LLMessageConfig::initClass("viewer", gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, ""));
+#endif
 
         }
         else
@@ -965,21 +968,21 @@ bool idle_startup()
             // system data
             LLMessageSystem* msg = gMessageSystem;
             msg->setExceptionFunc(MX_UNREGISTERED_MESSAGE,
-                                  invalid_message_callback,
-                                  NULL);
+                invalid_message_callback,
+                NULL);
             msg->setExceptionFunc(MX_PACKET_TOO_SHORT,
-                                  invalid_message_callback,
-                                  NULL);
+                invalid_message_callback,
+                NULL);
 
             // running off end of a packet is now valid in the case
             // when a reader has a newer message template than
             // the sender
             /*msg->setExceptionFunc(MX_RAN_OFF_END_OF_PACKET,
-                                  invalid_message_callback,
-                                  NULL);*/
+            invalid_message_callback,
+            NULL);*/
             msg->setExceptionFunc(MX_WROTE_PAST_BUFFER_SIZE,
-                                  invalid_message_callback,
-                                  NULL);
+                invalid_message_callback,
+                NULL);
 
             if (gSavedSettings.getBOOL("LogMessages"))
             {
@@ -1011,7 +1014,7 @@ bool idle_startup()
         FSData::instance().startDownload();
         // </FS:Techwolf Lupindo>
 
-// <AW: opensim>
+        // <AW: opensim>
 #ifndef SINGLEGRID
         if(!gSavedSettings.getBOOL("GridListDownload"))
         {
@@ -1040,7 +1043,7 @@ bool idle_startup()
         // Fetch grid infos as needed
         LLGridManager::getInstance()->initGrids();
         LLStartUp::setStartupState( STATE_FETCH_GRID_INFO );
-// <FS:AW optional opensim support>
+        // <FS:AW optional opensim support>
 #else
         LLGridManager::getInstance()->initialize(std::string());
         // <FS:Techwolf Lupindo> fsdata support
@@ -1048,12 +1051,12 @@ bool idle_startup()
         LLStartUp::setStartupState( STATE_FETCH_GRID_INFO );
         // </FS:Techwolf Lupindo>
 #endif // OPENSIM
-// </FS:AW optional opensim support>
+        // </FS:AW optional opensim support>
     }
 
     if (STATE_FETCH_GRID_INFO == LLStartUp::getStartupState())
     {
- // <FS:AW optional opensim support>
+        // <FS:AW optional opensim support>
         static LLFrameTimer grid_timer;
 
         const F32 grid_time = grid_timer.getElapsedTimeF32();
@@ -1061,11 +1064,11 @@ bool idle_startup()
 
         if(grid_time > MAX_WAIT_TIME ||
 #ifdef OPENSIM
-            ( sGridListRequestReady && LLGridManager::getInstance()->isReadyToLogin() &&
+        ( sGridListRequestReady && LLGridManager::getInstance()->isReadyToLogin() &&
 #endif      // <FS:Techwolf Lupindo> fsdata support
             FSData::instance().getFSDataDone())
 #ifdef OPENSIM
-                              )
+            )
 #endif      // </FS:Techwolf Lupindo>
         {
             LLStartUp::setStartupState( STATE_AUDIO_INIT );
@@ -1075,7 +1078,7 @@ bool idle_startup()
             ms_sleep(1);
             return false;
         }
-// <FS:AW optional opensim support>
+        // <FS:AW optional opensim support>
     }
 
     if (STATE_AUDIO_INIT == LLStartUp::getStartupState())
@@ -1090,7 +1093,7 @@ bool idle_startup()
         {
             LLStartUp::setStartSLURL(LLStartUp::getStartSLURLString());
         }
-// </AW: opensim>
+        // </AW: opensim>
 
         //-------------------------------------------------
         // Init audio, which may be needed for prefs dialog
@@ -1224,12 +1227,12 @@ bool idle_startup()
             show_connect_box = true;
         }
 
-// [RLVa:KB] - Patch: RLVa-2.1.0
+        // [RLVa:KB] - Patch: RLVa-2.1.0
         if (gSavedSettings.get<bool>(RlvSettingNames::Main))
         {
             show_connect_box = true;
         }
-// [/RVA:KB]
+        // [/RVA:KB]
 
         //setup map of datetime strings to codes and slt & local time offset from utc
         // *TODO: Does this need to be here?
@@ -1289,8 +1292,30 @@ bool idle_startup()
 
     if (STATE_LOGIN_SHOW == LLStartUp::getStartupState())
     {
+#ifdef _WIN32
+        // ProjectHyena launcher communication test.
+        // Only runs when the viewer was started with a pipe name.
+        static bool hyenaPipeTestAttempted = false;
+
+        if (!hyenaPipeTestAttempted)
+        {
+            hyenaPipeTestAttempted = true;
+
+            wchar_t pipeName[256] = {};
+
+            DWORD length = GetEnvironmentVariableW(L"PROJECTHYENA_PIPE_NAME", pipeName, 256);
+
+            if (length > 0 && length < 256)
+            {
+                const bool connected = HyenaPipeClient::SendViewerReady(pipeName);
+
+                LL_INFOS("HyenaPipe") << "Viewer communication test: " << (connected ? "connected" : "failed") << LL_ENDL;
+            }
+        }
+#endif
+
         LL_DEBUGS("AppInit") << "Initializing Window, show_connect_box = "
-                             << show_connect_box << LL_ENDL;
+            << show_connect_box << LL_ENDL;
 
         // if we've gone backwards in the login state machine, to this state where we show the UI
         // AND the debug setting to exit in this case is true, then go ahead and bail quickly
@@ -1330,20 +1355,106 @@ bool idle_startup()
             }
             // Make sure the process dialog doesn't hide things
             gViewerWindow->setShowProgress(false,false);
-            // Show the login dialog
-            login_show();
-            // connect dialog is already shown, so fill in the names
-            // <FS:CR>
-            //LLPanelLogin::populateFields( gUserCredential, gRememberUser, gRememberPassword);
-            if (gUserCredential.notNull() && !FSPanelLogin::isCredentialSet())
+            // ProjectHyena: the Hyena launcher replaces the Firestorm login panel (login_show / FSPanelLogin).
+            // --- NEW PANEL INSTANTIATION ---
+            // Register the launch button callback globally, BEFORE the XML is built
+            static bool launcher_callback_registered = false;
+            if (!launcher_callback_registered)
             {
-                FSPanelLogin::setFields(gUserCredential, true);
+                LLUICtrl::CommitCallbackRegistry::currentRegistrar().add("Launcher.Launch",
+                    [](LLUICtrl*, const LLSD&)
+                    {
+                        LL_INFOS("HyenaDebug")
+                            << "HYENA: Launch button clicked" << LL_ENDL;
+                        if (LLStartUp::getStartupState() == STATE_LOGIN_WAIT)
+                        {
+                            LLStartUp::setStartupState(STATE_LOGIN_CLEANUP);
+                        }
+                    });
+
+                LLUICtrl::CommitCallbackRegistry::currentRegistrar().add("Launcher.ForgotPassword",
+                    [](LLUICtrl*, const LLSD&)
+                    {
+                        std::string url;
+                        if (!LLTrans::findString(url, "forgot_password_url"))
+                        {
+                            url = "https://secondlife.com/my/account/request.php";
+                        }
+                        LLWeb::loadURLExternal(url);
+                    });
+
+                LLUICtrl::CommitCallbackRegistry::currentRegistrar().add("Launcher.CreateAccount",
+                    [](LLUICtrl*, const LLSD&)
+                    {
+                        std::string url;
+                        if (!LLTrans::findString(url, "create_account_url"))
+                        {
+                            url = "https://join.secondlife.com/";
+                        }
+                        LLWeb::loadURLExternal(url);
+                    });
+
+                launcher_callback_registered = true;
             }
-            // </FS:CR>
-            // <FS:Ansariel> [FS Login Panel]
-            //LLPanelLogin::giveFocus();
-            FSPanelLogin::giveFocus();
-            // </FS:Ansariel> [FS Login Panel]
+
+            LLView* root     = gViewerWindow->getRootView();
+            // Project Hyena: load the saved login for our launcher (the old login panel used to do this)
+            {
+                LLPointer<LLCredential> hy_saved = gSecAPIHandler->loadCredential(LLGridManager::getInstance()->getGrid());
+                LL_INFOS("HyenaDebug") << "HYENA: startup login: current=" << (gUserCredential.isNull() ? std::string("null") : gUserCredential->userID())
+                    << " saved=" << (hy_saved.isNull() ? std::string("none") : hy_saved->userID())
+                    << " grid=" << LLGridManager::getInstance()->getGrid() << LL_ENDL;
+                if (hy_saved.notNull() && (gUserCredential.isNull() || gUserCredential->userID().empty() || gUserCredential->userID() == "unknown"))
+                {
+                    gUserCredential = hy_saved;
+                }
+            }
+            LLView* existing = root->findChildView("hyena_launcher");
+            if (existing)
+            {
+                // Coming back to the login screen after a failed login:
+                // reuse the launcher that is already there instead of stacking a second one.
+                existing->setVisible(true);
+                root->sendChildToBack(existing);
+                existing->setShape(root->getLocalRect());
+
+                LLLauncherFloater* existing_launcher = dynamic_cast<LLLauncherFloater*>(existing);
+                if (existing_launcher)
+                {
+                    existing_launcher->populateFields(gUserCredential, gRememberUser, gRememberPassword);
+                    existing_launcher->giveFocus();
+                }
+                LL_INFOS("HyenaDebug") << "HYENA: Reusing existing launcher" << LL_ENDL;
+            }
+            else
+            {
+                LLPanel* panel = LLUICtrlFactory::getInstance()->createFromFile<LLPanel>("floater_hyena_launcher.xml",
+                    NULL,
+                    LLPanel::child_registry_t::instance());
+
+                if (panel)
+                {
+                    LLLauncherFloater* launcher = dynamic_cast<LLLauncherFloater*>(panel);
+                    if (launcher)
+                    {
+                        root->addChild(launcher);
+                        root->sendChildToBack(launcher);
+
+                        launcher->setFollowsAll();
+                        launcher->setShape(root->getLocalRect());
+                        launcher->setVisible(true);
+
+                        launcher->populateFields(gUserCredential, gRememberUser, gRememberPassword);
+                        launcher->giveFocus();
+                        LL_INFOS("HyenaDebug") << "HYENA: Launcher successfully created and shown!" << LL_ENDL;
+                    }
+                }
+            }
+
+
+
+
+            // -------------------------------
 
             // MAINT-3231 Show first run dialog only for Desura viewer
             if (gSavedSettings.getString("sourceid") == "1208_desura")
@@ -1351,8 +1462,8 @@ bool idle_startup()
                 if (gSavedSettings.getBOOL("FirstLoginThisInstall"))
                 {
                     LL_INFOS("AppInit") << "FirstLoginThisInstall, calling show_first_run_dialog()" << LL_ENDL;
-                // <FS:CR> Don't show first run dialog, ever, at all.
-                //  show_first_run_dialog();
+                    // <FS:CR> Don't show first run dialog, ever, at all.
+                    //  show_first_run_dialog();
                 }
                 else
                 {
@@ -1459,27 +1570,32 @@ bool idle_startup()
             return false;
         }
 
-// [RLVa:KB] - Checked: RLVa-0.2.1
+        // [RLVa:KB] - Checked: RLVa-0.2.1
         if (gSavedSettings.get<bool>(RlvSettingNames::Main))
         {
             RlvHandler::setEnabled(true);
         }
-// [/RLVa:KB]
+        // [/RLVa:KB]
 
         // reset the values that could have come in from a slurl
         // DEV-42215: Make sure they're not empty -- gUserCredential
         // might already have been set from gSavedSettings, and it's too bad
         // to overwrite valid values with empty strings.
 
+        show_connect_box = true; // ProjectHyena: always read fields from the launcher
         if (show_connect_box)
         {
-            // TODO if not use viewer auth
-            // Load all the name information out of the login view
-            // <FS:Ansariel> [FS Login Panel]
-            //LLPanelLogin::getFields(gUserCredential, gRememberUser, gRememberPassword);
-            FSPanelLogin::getFields(gUserCredential, gRememberPassword);
-            // </FS:Ansariel> [FS Login Panel]
-            // end TODO
+            // ProjectHyena: read the credentials from the launcher instead of FSPanelLogin
+            LLLauncherFloater* launcher = dynamic_cast<LLLauncherFloater*>(gViewerWindow->getRootView()->getChildView("hyena_launcher"));
+            if (launcher)
+            {
+                launcher->getFields(gUserCredential, gRememberUser, gRememberPassword);
+            }
+            else
+            {
+                // Fallback just in case
+                FSPanelLogin::getFields(gUserCredential, gRememberPassword);
+            }
 
             // HACK: Try to make not jump on login
             gKeyboard->resetKeys();
@@ -1514,14 +1630,14 @@ bool idle_startup()
         }
         // </FS:Ansariel>
         LL_INFOS("AppInit") << "Attempting login as: " << userid << LL_ENDL;
-//      gDebugInfo["LoginName"] = userid;
-// [SL:KB] - Patch: Viewer-CrashReporting | Checked: 2010-11-16 (Catznip-2.6.0a) | Added: Catznip-2.4.0b
+        //      gDebugInfo["LoginName"] = userid;
+        // [SL:KB] - Patch: Viewer-CrashReporting | Checked: 2010-11-16 (Catznip-2.6.0a) | Added: Catznip-2.4.0b
         if (gCrashSettings.getBOOL("CrashSubmitName"))
         {
             // Only include the agent name if the user consented
             gDebugInfo["LoginName"] = userid;
         }
-// [/SL:KB]
+        // [/SL:KB]
 
         // We don't save this version of the title because it'll
         //  be replaced later, we hope. -- TS
@@ -1542,11 +1658,11 @@ bool idle_startup()
 
         // create necessary directories
         // *FIX: these mkdir's should error check
-// <FS:CR> Seperate user directories per grid
+        // <FS:CR> Seperate user directories per grid
         //gDirUtilp->setLindenUserDir(userid, gridlabel);
         std::string gridlabel = LLGridManager::getInstance()->getGridLabel();
         gDirUtilp->setLindenUserDir(userid, LLGridManager::getInstance()->getGridLabel());
-// </FS:CR>
+        // </FS:CR>
         LLFile::mkdir(gDirUtilp->getLindenUserDir());
 
         // As soon as directories are ready initialize notification storages
@@ -1624,10 +1740,10 @@ bool idle_startup()
             gSavedPerAccountSettings.setString("SnapshotBaseName", gSavedPerAccountSettings.getControl("SnapshotBaseName")->getDefault().asString());
         }
         // </FS:LO>
-// <FS:CR> Seperate user directories per grid
+        // <FS:CR> Seperate user directories per grid
         //gDirUtilp->setPerAccountChatLogsDir(userid);
         gDirUtilp->setPerAccountChatLogsDir(userid, gridlabel);
-// </FS:CR>
+        // </FS:CR>
         LLFile::mkdir(gDirUtilp->getChatLogsDir());
         LLFile::mkdir(gDirUtilp->getPerAccountChatLogsDir());
 
@@ -1652,7 +1768,7 @@ bool idle_startup()
                 // <FS:Ansariel> [FS Login Panel]
                 //LLPanelLogin::closePanel();
                 FSPanelLogin::closePanel();
-                // </FS:Ansariel> [FS Login Panel]
+            // </FS:Ansariel> [FS Login Panel]
         }
 
 
@@ -1678,26 +1794,26 @@ bool idle_startup()
         // their last location, or some URL "-url //sim/x/y[/z]"
         // All accounts have both a home and a last location, and we don't support
         // more locations than that.  Choose the appropriate one.  JC
-// [RLVa:KB] - Checked: RLVa-0.2.1
+        // [RLVa:KB] - Checked: RLVa-0.2.1
         if ( (RlvHandler::isEnabled()) && (RlvSettings::getLoginLastLocation()) )
         {
             // Force login at the last location
             LLStartUp::setStartSLURL(LLSLURL(LLSLURL::SIM_LOCATION_LAST));
         }
-// [/RLVa:KB]
+        // [/RLVa:KB]
 
         switch (LLStartUp::getStartSLURL().getType())
-          {
-          case LLSLURL::LOCATION:
+        {
+        case LLSLURL::LOCATION:
             agent_location_id = START_LOCATION_ID_URL;
             break;
-          case LLSLURL::LAST_LOCATION:
+        case LLSLURL::LAST_LOCATION:
             agent_location_id = START_LOCATION_ID_LAST;
             break;
-          default:
+        default:
             agent_location_id = START_LOCATION_ID_HOME;
             break;
-          }
+        }
 
         gViewerWindow->getWindow()->setCursor(UI_CURSOR_WAIT);
 
@@ -1751,7 +1867,7 @@ bool idle_startup()
         progress += 0.02f;
         do_startup_frame();
 
-// <AW: crash report grid correctness>
+        // <AW: crash report grid correctness>
         eLastExecEvent last_exec_event = gLastExecEvent;
         const std::string current_grid = LLGridManager::getInstance()->getGrid();
         const std::string last_grid = gSavedSettings.getString("LastConnectedGrid");
@@ -1762,27 +1878,27 @@ bool idle_startup()
             last_exec_event = LAST_EXEC_NORMAL;
         }
         LLTrans::setDefaultArg("CURRENT_GRID", LLGridManager::getInstance()->getGridLabel());
-// </AW: crash report grid correctness>
+        // </AW: crash report grid correctness>
 
         // Setting initial values...
         LLLoginInstance* login = LLLoginInstance::getInstance();
         login->setNotificationsInterface(LLNotifications::getInstance());
 
         login->setSerialNumber(LLAppViewer::instance()->getSerialNumber());
-// <AW: crash report grid correctness>
-//      login->setLastExecEvent(gLastExecEvent);
+        // <AW: crash report grid correctness>
+        //      login->setLastExecEvent(gLastExecEvent);
         login->setLastExecDuration(gLastExecDuration);
         login->setLastExecEvent(last_exec_event);
-// </AW: crash report grid correctness>
+        // </AW: crash report grid correctness>
         login->setLastAgentSessionId(gLastAgentSessionId);
 
         // This call to LLLoginInstance::connect() starts the
         // authentication process.
         login->connect(gUserCredential);
 #if defined(OPENSIM) && !defined(SINGLEGRID) // <FS:AW optional opensim support>
-// <AW: opensim>
+        // <AW: opensim>
         LLGridManager::getInstance()->saveGridList();
-// </AW: opensim>
+        // </AW: opensim>
 #endif // OPENSIM // <FS:AW optional opensim support>
         LLStartUp::setStartupState( STATE_LOGIN_CURL_UNSTUCK );
         return false;
@@ -1807,7 +1923,7 @@ bool idle_startup()
         if(LLLoginInstance::getInstance()->authFailure())
         {
             LL_INFOS("LLStartUp") << "Login failed, LLLoginInstance::getResponse(): "
-                                  << LLLoginInstance::getInstance()->getResponse() << LL_ENDL;
+                << LLLoginInstance::getInstance()->getResponse() << LL_ENDL;
             LLSD response = LLLoginInstance::getInstance()->getResponse();
             // Still have error conditions that may need some
             // sort of handling - dig up specific message
@@ -1926,7 +2042,7 @@ bool idle_startup()
                                 // if we are handling an untrusted CA, throw up the dialog
                                 // with the 'trust this CA' button.
                                 LLNotificationsUtil::add("TrustCertificateError", args, response,
-                                                        trust_cert_done);
+                                    trust_cert_done);
 
                                 // <FS:Ansariel> Not needed here - done below
                                 //show_connect_box = true;
@@ -1939,7 +2055,7 @@ bool idle_startup()
                                 args["REASON"] = LLTrans::getString(message_response);
 
                                 LLNotificationsUtil::add("GeneralCertificateError", args, response,
-                                                         general_cert_done);
+                                    general_cert_done);
 
                                 // <FS:Ansariel> Not needed here - done below & in transition_back_to_login_panel()
                                 //reset_login();
@@ -1974,23 +2090,26 @@ bool idle_startup()
         }
         else if(LLLoginInstance::getInstance()->authSuccess())
         {
-// <FS:CR> Aurora Sim
+            // <FS:CR> Aurora Sim
             //if(process_login_success_response())
             if(process_login_success_response(first_sim_size_x,first_sim_size_y))
-// </FS:CR> Aurora Sim
+                // </FS:CR> Aurora Sim
             {
-// <AW: crash report grid correctness>
+                // <AW: crash report grid correctness>
                 const std::string current_grid = LLGridManager::getInstance()->getGrid();
                 gSavedSettings.setString("LastConnectedGrid", current_grid);
-// </AW: crash report grid correctness>
+                // </AW: crash report grid correctness>
 
                 // Pass the user information to the voice chat server interface.
                 LLVoiceClient::getInstance()->userAuthorized(gUserCredential->userID(), gAgentID);
                 // create the default proximal channel
                 LLVoiceChannel::initClass();
 
-                if (gSavedSettings.getBOOL("FSRememberUsername"))
+                // Project Hyena: our launcher's Remember Username box decides (gRememberUser comes from getFields)
+                LL_INFOS("HyenaDebug") << "HYENA: login ok, remember_user=" << (int)gRememberUser << " remember_password=" << (int)gRememberPassword << " user=" << gUserCredential->userID() << LL_ENDL;
+                if (gRememberUser)
                 {
+                    gSecAPIHandler->addToCredentialMap("login_list", gUserCredential, gRememberPassword);
                     gSecAPIHandler->saveCredential(gUserCredential, gRememberPassword);
                 }
                 FSPanelLogin::clearPassword();
@@ -2034,6 +2153,14 @@ bool idle_startup()
         do_startup_frame();
 
         // close login UI before world UI is initialized, if it is still visible
+        // ProjectHyena: hide the launcher
+        {
+            LLView* hyena_launcher = gViewerWindow->getRootView()->getChildView("hyena_launcher");
+            if (hyena_launcher)
+            {
+                hyena_launcher->setVisible(false);
+            }
+        }
         // <FS:Ansariel> [FS Login Panel]
         //LLPanelLogin::closePanel();
         FSPanelLogin::closePanel();
@@ -2119,17 +2246,17 @@ bool idle_startup()
         gAgent.initOriginGlobal(from_region_handle(gFirstSimHandle));
         do_startup_frame();
 
-// <FS:CR> Aurora Sim
+        // <FS:CR> Aurora Sim
         //LLWorld::getInstance()->addRegion(gFirstSimHandle, gFirstSim);
         LLWorld::getInstance()->addRegion(gFirstSimHandle, gFirstSim, first_sim_size_x, first_sim_size_y);
-// </FS:CR> Aurora Sim
+        // </FS:CR> Aurora Sim
         do_startup_frame();
 
         LLViewerRegion *regionp = LLWorld::getInstance()->getRegionFromHandle(gFirstSimHandle);
         LL_INFOS("AppInit") << "Adding initial simulator " << regionp->getOriginGlobal() << LL_ENDL;
 
         LL_DEBUGS("CrossingCaps") << "Calling setSeedCapability from init_idle(). Seed cap == "
-        << gFirstSimSeedCap << LL_ENDL;
+            << gFirstSimSeedCap << LL_ENDL;
         regionp->setSeedCapability(gFirstSimSeedCap);
         LL_DEBUGS("AppInit") << "Waiting for seed grant ...." << LL_ENDL;
         do_startup_frame();
@@ -2298,10 +2425,10 @@ bool idle_startup()
         gMessageSystem->setMaxMessageTime( 0.5f );          // Spam if decoding all msgs takes more than 500 ms
         do_startup_frame();
 
-        #ifndef LL_RELEASE_FOR_DOWNLOAD
-            gMessageSystem->setTimeDecodes( true );             // Time the decode of each msg
-            gMessageSystem->setTimeDecodesSpamThreshold( 0.05f );  // Spam if a single msg takes over 50ms to decode
-        #endif
+#ifndef LL_RELEASE_FOR_DOWNLOAD
+        gMessageSystem->setTimeDecodes( true );             // Time the decode of each msg
+        gMessageSystem->setTimeDecodesSpamThreshold( 0.05f );  // Spam if a single msg takes over 50ms to decode
+#endif
         do_startup_frame();
 
         gXferManager->registerCallbacks(gMessageSystem);
@@ -2613,7 +2740,7 @@ bool idle_startup()
     if (STATE_INVENTORY_SEND == LLStartUp::getStartupState())
     {
         LL_PROFILE_ZONE_NAMED("State inventory send")
-        do_startup_frame();
+            do_startup_frame();
 
         // request mute list
         LL_INFOS() << "Requesting Mute List" << LL_ENDL;
@@ -2671,16 +2798,16 @@ bool idle_startup()
     {
         LL_PROFILE_ZONE_NAMED("State inventory load skeleton")
 
-        LLSD response = LLLoginInstance::getInstance()->getResponse();
+            LLSD response = LLLoginInstance::getInstance()->getResponse();
 
         LLSD inv_skel_lib = response["inventory-skel-lib"];
         if (inv_skel_lib.isDefined() && gInventory.getLibraryOwnerID().notNull())
         {
             LL_PROFILE_ZONE_NAMED("load library inv")
-            if (!gInventory.loadSkeleton(inv_skel_lib, gInventory.getLibraryOwnerID()))
-            {
-                LL_WARNS("AppInit") << "Problem loading inventory-skel-lib" << LL_ENDL;
-            }
+                if (!gInventory.loadSkeleton(inv_skel_lib, gInventory.getLibraryOwnerID()))
+                {
+                    LL_WARNS("AppInit") << "Problem loading inventory-skel-lib" << LL_ENDL;
+                }
         }
         do_startup_frame();
 
@@ -2688,10 +2815,10 @@ bool idle_startup()
         if (inv_skeleton.isDefined())
         {
             LL_PROFILE_ZONE_NAMED("load personal inv")
-            if (!gInventory.loadSkeleton(inv_skeleton, gAgent.getID()))
-            {
-                LL_WARNS("AppInit") << "Problem loading inventory-skel-targets" << LL_ENDL;
-            }
+                if (!gInventory.loadSkeleton(inv_skeleton, gAgent.getID()))
+                {
+                    LL_WARNS("AppInit") << "Problem loading inventory-skel-targets" << LL_ENDL;
+                }
         }
         do_startup_frame();
         LLStartUp::setStartupState(STATE_INVENTORY_SEND2);
@@ -2703,7 +2830,7 @@ bool idle_startup()
     {
         LL_PROFILE_ZONE_NAMED("State inventory send2")
 
-        LLSD response = LLLoginInstance::getInstance()->getResponse();
+            LLSD response = LLLoginInstance::getInstance()->getResponse();
 
         LLSD inv_basic = response["inventory-basic"];
         if(inv_basic.isDefined())
@@ -2887,13 +3014,13 @@ bool idle_startup()
         LLFloaterReg::getInstance("inventory");
         do_startup_frame();
 
-// [RLVa:KB] - Checked: RLVa-1.1.0
+        // [RLVa:KB] - Checked: RLVa-1.1.0
         if (RlvHandler::isEnabled())
         {
             // Regularly process a select subset of retained commands during logon
             gIdleCallbacks.addFunction(RlvHandler::onIdleStartup, new LLTimer());
         }
-// [/RLVa:KB]
+        // [/RLVa:KB]
 
         LLStartUp::setStartupState( STATE_MISC );
         do_startup_frame();
@@ -3036,8 +3163,8 @@ bool idle_startup()
                     const bool no_inform_server = false;
                     const bool no_deactivate_similar = false;
                     LLGestureMgr::instance().activateGestureWithAsset(item_id, asset_id,
-                                         no_inform_server,
-                                         no_deactivate_similar);
+                        no_inform_server,
+                        no_deactivate_similar);
                     // We need to fetch the inventory items for these gestures
                     // so we have the names to populate the UI.
                     item_ids.push_back(item_id);
@@ -3106,21 +3233,21 @@ bool idle_startup()
                 std::string msg;
                 switch(start_slurl.getType())
                 {
-                    case LLSLURL::LOCATION:
-                    {
+                case LLSLURL::LOCATION:
+                {
 
-                        msg = "AvatarMovedDesired";
-                        break;
-                    }
-                    case LLSLURL::HOME_LOCATION:
-                    {
-                        msg = "AvatarMovedHome";
-                        break;
-                    }
-                    default:
-                    {
-                        msg = "AvatarMovedLast";
-                    }
+                    msg = "AvatarMovedDesired";
+                    break;
+                }
+                case LLSLURL::HOME_LOCATION:
+                {
+                    msg = "AvatarMovedHome";
+                    break;
+                }
+                default:
+                {
+                    msg = "AvatarMovedLast";
+                }
                 }
                 LLNotificationsUtil::add(msg);
             }
@@ -3180,13 +3307,13 @@ bool idle_startup()
         {
             gAgentWearables.notifyLoadingStarted();
             gAgent.setOutfitChosen(true);
-// <FS:Ansariel> [Legacy Bake]
+            // <FS:Ansariel> [Legacy Bake]
             //gAgentWearables.sendDummyAgentWearablesUpdate();
             if (LLGridManager::getInstance()->isInSecondLife())
             {
                 gAgentWearables.sendDummyAgentWearablesUpdate();
             }
-// </FS:Ansariel> [Legacy Bake]
+            // </FS:Ansariel> [Legacy Bake]
             callAfterCOFFetch(set_flags_and_update_appearance);
         }
 
@@ -3206,7 +3333,7 @@ bool idle_startup()
             // unusual circumstances, so set the timeout fairly high
             // to minimize mistaken hits here.
             LL_WARNS() << "Wait for valid avatar state exceeded "
-                    << timeout.getElapsedTimeF32() << " will invoke gender chooser" << LL_ENDL;
+                << timeout.getElapsedTimeF32() << " will invoke gender chooser" << LL_ENDL;
             LLStartUp::setStartupState( STATE_WEARABLES_WAIT );
         }
         else
@@ -3214,7 +3341,7 @@ bool idle_startup()
             update_texture_fetch();
             set_startup_status(0.60f + 0.30f * timeout_frac,
                 LLTrans::getString("LoginPrecaching"),
-                    gAgent.mMOTD.c_str());
+                gAgent.mMOTD.c_str());
             do_startup_frame();
         }
 
@@ -3255,8 +3382,8 @@ bool idle_startup()
             LLStartUp::setStartupState( STATE_CLEANUP );
         }
         else if (gAgent.isFirstLogin()
-                && isAgentAvatarValid()
-                && gAgentAvatarp->isFullyLoaded())
+            && isAgentAvatarValid()
+            && gAgentAvatarp->isFullyLoaded())
         {
             // wait for avatar to be completely loaded
             if (isAgentAvatarValid()
@@ -3696,9 +3823,9 @@ void show_release_notes_if_required()
                 "showrelnotes",
                 [](const LLSD& url) {
                     LLCoros::instance().launch("releaseNotesCoro",
-                    boost::bind(&validate_release_notes_coro, url.asString()));
-                return false;
-            });
+                        boost::bind(&validate_release_notes_coro, url.asString()));
+                    return false;
+                });
         }
         else
 #endif // LL_RELEASE_FOR_DOWNLOAD
@@ -3706,7 +3833,7 @@ void show_release_notes_if_required()
             LLSD info(LLAppViewer::instance()->getViewerInfo());
             std::string url = info["VIEWER_RELEASE_NOTES_URL"].asString();
             LLCoros::instance().launch("releaseNotesCoro",
-                                       boost::bind(&release_notes_coro, url));
+                boost::bind(&release_notes_coro, url));
         }
         release_notes_shown = true;
     }
@@ -3750,18 +3877,18 @@ bool login_alert_status(const LLSD& notification, const LLSD& response)
     // Buttons
     switch( option )
     {
-        case 0:     // OK
-            break;
-      //  case 1:     // Help
-      //      LLWeb::loadURL(LLNotifications::instance().getGlobalString("SUPPORT_URL") );
-      //      break;
-        case 2:     // Teleport
-            // Restart the login process, starting at our home locaton
-      LLStartUp::setStartSLURL(LLSLURL(LLSLURL::SIM_LOCATION_HOME));
-            LLStartUp::setStartupState( STATE_LOGIN_CLEANUP );
-            break;
-        default:
-            LL_WARNS("AppInit") << "Missing case in login_alert_status switch" << LL_ENDL;
+    case 0:     // OK
+        break;
+        //  case 1:     // Help
+        //      LLWeb::loadURL(LLNotifications::instance().getGlobalString("SUPPORT_URL") );
+        //      break;
+    case 2:     // Teleport
+        // Restart the login process, starting at our home locaton
+        LLStartUp::setStartSLURL(LLSLURL(LLSLURL::SIM_LOCATION_HOME));
+        LLStartUp::setStartupState( STATE_LOGIN_CLEANUP );
+        break;
+    default:
+        LL_WARNS("AppInit") << "Missing case in login_alert_status switch" << LL_ENDL;
     }
 
     // <FS:Ansariel> [FS Login Panel]
@@ -3862,7 +3989,7 @@ void register_viewer_callbacks(LLMessageSystem* msg)
     msg->setHandlerFuncFast(_PREHASH_ReplyTaskInventory,        LLViewerObject::processTaskInv, NULL);
     msg->setHandlerFuncFast(_PREHASH_DerezContainer,            process_derez_container, NULL);
     msg->setHandlerFuncFast(_PREHASH_ScriptRunningReply,
-                        &LLLiveLSLEditor::processScriptRunningReply);
+        &LLLiveLSLEditor::processScriptRunningReply);
 
     msg->setHandlerFuncFast(_PREHASH_DeRezAck, process_derez_ack);
 
@@ -3873,44 +4000,44 @@ void register_viewer_callbacks(LLMessageSystem* msg)
     //msg->setHandlerFuncFast(_PREHASH_RemoveModifyAbility,
     //                  &LLAgent::processRemoveModifyAbility);
     msg->setHandlerFuncFast(_PREHASH_AgentDataUpdate,
-                        &LLAgent::processAgentDataUpdate);
+        &LLAgent::processAgentDataUpdate);
     msg->setHandlerFuncFast(_PREHASH_AgentGroupDataUpdate,
-                        &LLAgent::processAgentGroupDataUpdate);
+        &LLAgent::processAgentGroupDataUpdate);
     msg->setHandlerFunc("AgentDropGroup",
-                        &LLAgent::processAgentDropGroup);
+        &LLAgent::processAgentDropGroup);
     // land ownership messages
     msg->setHandlerFuncFast(_PREHASH_ParcelOverlay,
-                        LLViewerParcelMgr::processParcelOverlay);
+        LLViewerParcelMgr::processParcelOverlay);
     msg->setHandlerFuncFast(_PREHASH_ParcelProperties,
-                        LLViewerParcelMgr::processParcelProperties);
+        LLViewerParcelMgr::processParcelProperties);
     msg->setHandlerFunc("ParcelAccessListReply",
         LLViewerParcelMgr::processParcelAccessListReply);
     msg->setHandlerFunc("ParcelDwellReply",
         LLViewerParcelMgr::processParcelDwellReply);
 
     msg->setHandlerFunc("AvatarPropertiesReply",
-                        &LLAvatarPropertiesProcessor::processAvatarLegacyPropertiesReply);
+        &LLAvatarPropertiesProcessor::processAvatarLegacyPropertiesReply);
     msg->setHandlerFunc("AvatarInterestsReply",
-                        &LLAvatarPropertiesProcessor::processAvatarInterestsReply);
+        &LLAvatarPropertiesProcessor::processAvatarInterestsReply);
     msg->setHandlerFunc("AvatarGroupsReply",
-                        &LLAvatarPropertiesProcessor::processAvatarGroupsReply);
+        &LLAvatarPropertiesProcessor::processAvatarGroupsReply);
     msg->setHandlerFunc("AvatarNotesReply",
-                        &LLAvatarPropertiesProcessor::processAvatarNotesReply);
+        &LLAvatarPropertiesProcessor::processAvatarNotesReply);
     msg->setHandlerFunc("AvatarPicksReply",
-                        &LLAvatarPropertiesProcessor::processAvatarPicksReply);
+        &LLAvatarPropertiesProcessor::processAvatarPicksReply);
     msg->setHandlerFunc("AvatarClassifiedReply",
-                        &LLAvatarPropertiesProcessor::processAvatarClassifiedsReply);
+        &LLAvatarPropertiesProcessor::processAvatarClassifiedsReply);
 
     msg->setHandlerFuncFast(_PREHASH_CreateGroupReply,
-                        LLGroupMgr::processCreateGroupReply);
+        LLGroupMgr::processCreateGroupReply);
     msg->setHandlerFuncFast(_PREHASH_JoinGroupReply,
-                        LLGroupMgr::processJoinGroupReply);
+        LLGroupMgr::processJoinGroupReply);
     msg->setHandlerFuncFast(_PREHASH_EjectGroupMemberReply,
-                        LLGroupMgr::processEjectGroupMemberReply);
+        LLGroupMgr::processEjectGroupMemberReply);
     msg->setHandlerFuncFast(_PREHASH_LeaveGroupReply,
-                        LLGroupMgr::processLeaveGroupReply);
+        LLGroupMgr::processLeaveGroupReply);
     msg->setHandlerFuncFast(_PREHASH_GroupProfileReply,
-                        LLGroupMgr::processGroupPropertiesReply);
+        LLGroupMgr::processGroupPropertiesReply);
 
     // ratings deprecated
     // msg->setHandlerFuncFast(_PREHASH_ReputationIndividualReply,
@@ -3920,18 +4047,18 @@ void register_viewer_callbacks(LLMessageSystem* msg)
     msg->setHandlerFuncFast(_PREHASH_AgentWearablesUpdate, LLAgentWearables::processAgentInitialWearablesUpdate );
 
     msg->setHandlerFunc("ScriptControlChange",
-                        LLAgent::processScriptControlChange );
+        LLAgent::processScriptControlChange );
 
     msg->setHandlerFuncFast(_PREHASH_ViewerEffect, LLHUDManager::processViewerEffect);
 
     msg->setHandlerFuncFast(_PREHASH_GrantGodlikePowers, process_grant_godlike_powers);
 
     msg->setHandlerFuncFast(_PREHASH_GroupAccountSummaryReply,
-                            LLPanelGroupLandMoney::processGroupAccountSummaryReply);
+        LLPanelGroupLandMoney::processGroupAccountSummaryReply);
     msg->setHandlerFuncFast(_PREHASH_GroupAccountDetailsReply,
-                            LLPanelGroupLandMoney::processGroupAccountDetailsReply);
+        LLPanelGroupLandMoney::processGroupAccountDetailsReply);
     msg->setHandlerFuncFast(_PREHASH_GroupAccountTransactionsReply,
-                            LLPanelGroupLandMoney::processGroupAccountTransactionsReply);
+        LLPanelGroupLandMoney::processGroupAccountTransactionsReply);
 
     msg->setHandlerFuncFast(_PREHASH_UserInfoReply,
         process_user_info_reply);
@@ -3946,13 +4073,13 @@ void register_viewer_callbacks(LLMessageSystem* msg)
     msg->setHandlerFunc("ImageNotInDatabase", LLViewerTextureList::processImageNotInDatabase, NULL);
 
     msg->setHandlerFuncFast(_PREHASH_GroupMembersReply,
-                        LLGroupMgr::processGroupMembersReply);
+        LLGroupMgr::processGroupMembersReply);
     msg->setHandlerFunc("GroupRoleDataReply",
-                        LLGroupMgr::processGroupRoleDataReply);
+        LLGroupMgr::processGroupRoleDataReply);
     msg->setHandlerFunc("GroupRoleMembersReply",
-                        LLGroupMgr::processGroupRoleMembersReply);
+        LLGroupMgr::processGroupRoleMembersReply);
     msg->setHandlerFunc("GroupTitlesReply",
-                        LLGroupMgr::processGroupTitlesReply);
+        LLGroupMgr::processGroupTitlesReply);
     // Special handler as this message is sometimes used for group land.
     msg->setHandlerFunc("PlacesReply", process_places_reply);
     msg->setHandlerFunc("GroupNoticesListReply", LLPanelGroupNotices::processGroupNoticesListReply);
@@ -4014,15 +4141,15 @@ bool callback_choose_gender(const LLSD& notification, const LLSD& response)
     S32 option = LLNotification::getSelectedOption(notification, response);
     switch(option)
     {
-        case OPT_MALE:
-            LLStartUp::loadInitialOutfit( gSavedSettings.getString("DefaultMaleAvatar"), "male" );
-            break;
+    case OPT_MALE:
+        LLStartUp::loadInitialOutfit( gSavedSettings.getString("DefaultMaleAvatar"), "male" );
+        break;
 
-        case OPT_FEMALE:
-        case OPT_CLOSED_WINDOW:
-        default:
-            LLStartUp::loadInitialOutfit( gSavedSettings.getString("DefaultFemaleAvatar"), "female" );
-            break;
+    case OPT_FEMALE:
+    case OPT_CLOSED_WINDOW:
+    default:
+        LLStartUp::loadInitialOutfit( gSavedSettings.getString("DefaultFemaleAvatar"), "female" );
+        break;
     }
     return false;
 }
@@ -4032,7 +4159,7 @@ std::string get_screen_filename(const std::string& pattern)
     // <FS:Ansariel> OpenSim support
     //if (LLGridManager::getInstance()->isInProductionGrid())
     if (LLGridManager::getInstance()->isInSLMain())
-    // </FS:Ansariel>
+        // </FS:Ansariel>
     {
         return llformat(pattern.c_str(), "");
     }
@@ -4059,7 +4186,7 @@ std::string LLStartUp::getScreenHomeFilename()
 
 //static
 void LLStartUp::loadInitialOutfit( const std::string& outfit_folder_name,
-                                   const std::string& gender_name )
+    const std::string& gender_name )
 {
     LL_DEBUGS() << "starting" << LL_ENDL;
 
@@ -4132,12 +4259,12 @@ void LLStartUp::loadInitialOutfit( const std::string& outfit_folder_name,
     }
 
     gAgent.setOutfitChosen(true);
-// <FS:Ansariel> [Legacy Bake]
+    // <FS:Ansariel> [Legacy Bake]
 #ifdef OPENSIM
     if (LLGridManager::getInstance()->isInSecondLife())
 #endif
-// </FS:Ansariel> [Legacy Bake]
-    gAgentWearables.sendDummyAgentWearablesUpdate();
+        // </FS:Ansariel> [Legacy Bake]
+        gAgentWearables.sendDummyAgentWearablesUpdate();
 }
 
 std::string& LLStartUp::getInitialOutfitName()
@@ -4356,7 +4483,7 @@ bool LLStartUp::dispatchURL()
     // ok, if we've gotten this far and have a startup URL
     if (!getStartSLURL().isValid())
     {
-      return false;
+        return false;
     }
     if(getStartSLURL().getType() != LLSLURL::APP)
     {
@@ -4374,7 +4501,7 @@ bool LLStartUp::dispatchURL()
             || (dy*dy > SLOP*SLOP) )
         {
             LLURLDispatcher::dispatch(getStartSLURL().getSLURLString(), LLCommandHandler::NAV_TYPE_CLICKED,
-                          NULL, false);
+                NULL, false);
         }
         return true;
     }
@@ -4383,19 +4510,19 @@ bool LLStartUp::dispatchURL()
 
 void LLStartUp::setStartSLURL(const LLSLURL& slurl)
 {
-  sStartSLURL = slurl;
-  switch(slurl.getType())
+    sStartSLURL = slurl;
+    switch(slurl.getType())
     {
     case LLSLURL::HOME_LOCATION:
-      {
-          gSavedSettings.setString("LoginLocation", LLSLURL::SIM_LOCATION_HOME);
-    break;
-      }
+    {
+        gSavedSettings.setString("LoginLocation", LLSLURL::SIM_LOCATION_HOME);
+        break;
+    }
     case LLSLURL::LAST_LOCATION:
-      {
-    gSavedSettings.setString("LoginLocation", LLSLURL::SIM_LOCATION_LAST);
-    break;
-      }
+    {
+        gSavedSettings.setString("LoginLocation", LLSLURL::SIM_LOCATION_LAST);
+        break;
+    }
     // <FS:Ansariel> Support adding grids via SLURL
 #if OPENSIM && !SINGLEGRID
     case LLSLURL::APP:
@@ -4405,14 +4532,14 @@ void LLStartUp::setStartSLURL(const LLSLURL& slurl)
             break;
         }
 #endif
-    // </FS:Ansariel>
+        // </FS:Ansariel>
     default:
-            LLGridManager::getInstance()->setGridChoice(slurl.getGrid());
-            break;
+        LLGridManager::getInstance()->setGridChoice(slurl.getGrid());
+        break;
     }
 
-  // <FS:Ansariel> FIRE-29994: Start location doesn't get updated when selection a destination from the login splash screen
-  FSPanelLogin::onUpdateStartSLURL(sStartSLURL);
+    // <FS:Ansariel> FIRE-29994: Start location doesn't get updated when selection a destination from the login splash screen
+    FSPanelLogin::onUpdateStartSLURL(sStartSLURL);
 }
 
 // static
@@ -4422,14 +4549,14 @@ LLSLURL& LLStartUp::getStartSLURL()
 }
 
 /**
- * Read all proxy configuration settings and set up both the HTTP proxy and
- * SOCKS proxy as needed.
- *
- * Any errors that are encountered will result in showing the user a notification.
- * When an error is encountered,
- *
- * @return Returns true if setup was successful, false if an error was encountered.
- */
+* Read all proxy configuration settings and set up both the HTTP proxy and
+* SOCKS proxy as needed.
+*
+* Any errors that are encountered will result in showing the user a notification.
+* When an error is encountered,
+*
+* @return Returns true if setup was successful, false if an error was encountered.
+*/
 bool LLStartUp::startLLProxy()
 {
     bool proxy_ok = true;
@@ -4492,38 +4619,38 @@ bool LLStartUp::startLLProxy()
 
                 switch(status)
                 {
-                    case SOCKS_CONNECT_ERROR: // TCP Fail
-                        error_string = "SOCKS_CONNECT_ERROR";
-                        break;
+                case SOCKS_CONNECT_ERROR: // TCP Fail
+                    error_string = "SOCKS_CONNECT_ERROR";
+                    break;
 
-                    case SOCKS_NOT_PERMITTED: // SOCKS 5 server rule set refused connection
-                        error_string = "SOCKS_NOT_PERMITTED";
-                        break;
+                case SOCKS_NOT_PERMITTED: // SOCKS 5 server rule set refused connection
+                    error_string = "SOCKS_NOT_PERMITTED";
+                    break;
 
-                    case SOCKS_NOT_ACCEPTABLE: // Selected authentication is not acceptable to server
-                        error_string = "SOCKS_NOT_ACCEPTABLE";
-                        break;
+                case SOCKS_NOT_ACCEPTABLE: // Selected authentication is not acceptable to server
+                    error_string = "SOCKS_NOT_ACCEPTABLE";
+                    break;
 
-                    case SOCKS_AUTH_FAIL: // Authentication failed
-                        error_string = "SOCKS_AUTH_FAIL";
-                        break;
+                case SOCKS_AUTH_FAIL: // Authentication failed
+                    error_string = "SOCKS_AUTH_FAIL";
+                    break;
 
-                    case SOCKS_UDP_FWD_NOT_GRANTED: // UDP forward request failed
-                        error_string = "SOCKS_UDP_FWD_NOT_GRANTED";
-                        break;
+                case SOCKS_UDP_FWD_NOT_GRANTED: // UDP forward request failed
+                    error_string = "SOCKS_UDP_FWD_NOT_GRANTED";
+                    break;
 
-                    case SOCKS_HOST_CONNECT_FAILED: // Failed to open a TCP channel to the socks server
-                        error_string = "SOCKS_HOST_CONNECT_FAILED";
-                        break;
+                case SOCKS_HOST_CONNECT_FAILED: // Failed to open a TCP channel to the socks server
+                    error_string = "SOCKS_HOST_CONNECT_FAILED";
+                    break;
 
-                    case SOCKS_INVALID_HOST: // Improperly formatted host address or port.
-                        error_string = "SOCKS_INVALID_HOST";
-                        break;
+                case SOCKS_INVALID_HOST: // Improperly formatted host address or port.
+                    error_string = "SOCKS_INVALID_HOST";
+                    break;
 
-                    default:
-                        error_string = "SOCKS_UNKNOWN_STATUS"; // Something strange happened,
-                        LL_WARNS("Proxy") << "Unknown return from LLProxy::startProxy(): " << status << LL_ENDL;
-                        break;
+                default:
+                    error_string = "SOCKS_UNKNOWN_STATUS"; // Something strange happened,
+                    LL_WARNS("Proxy") << "Unknown return from LLProxy::startProxy(): " << status << LL_ENDL;
+                    break;
                 }
 
                 LLNotificationsUtil::add(error_string, subs);
@@ -4616,13 +4743,13 @@ LLSD transform_cert_args(LLPointer<LLCertificate> cert)
         // strings, so special case those.
         LLSDSerialize::toXML(cert_info[iter->first], std::cout);
         if((iter->first == std::string(CERT_KEY_USAGE)) ||
-           (iter->first == std::string(CERT_EXTENDED_KEY_USAGE)))
+            (iter->first == std::string(CERT_EXTENDED_KEY_USAGE)))
         {
             value = "";
             LLSD usage = cert_info[iter->first];
             for (LLSD::array_iterator usage_iter = usage.beginArray();
-                 usage_iter != usage.endArray();
-                 usage_iter++)
+                usage_iter != usage.endArray();
+                usage_iter++)
             {
 
                 if(usage_iter != usage.beginArray())
@@ -4641,7 +4768,7 @@ LLSD transform_cert_args(LLPointer<LLCertificate> cert)
 
         std::string name = iter->first;
         std::transform(name.begin(), name.end(), name.begin(),
-                       (int(*)(int))toupper);
+            (int(*)(int))toupper);
         args[name.c_str()] = value;
     }
     return args;
@@ -4665,28 +4792,28 @@ void trust_cert_done(const LLSD& notification, const LLSD& response)
     S32 option = LLNotification::getSelectedOption(notification, response);
     switch(option)
     {
-        case OPT_TRUST_CERT:
-        {
-            LLPointer<LLCertificate> cert = gSecAPIHandler->getCertificate(notification["payload"]["certificate"]);
-            LLPointer<LLCertificateStore> store = gSecAPIHandler->getCertificateStore(gSavedSettings.getString("CertStore"));
-            store->add(cert);
-            store->save();
-            LLStartUp::setStartupState( STATE_LOGIN_CLEANUP );
-            break;
-        }
-        case OPT_CANCEL_TRUST:
-            // <FS:Ansariel> That's what transition_back_to_login_panel is for and does!
-            //reset_login();
-            //gSavedSettings.setBOOL("AutoLogin", false);
-            //LLStartUp::setStartupState( STATE_LOGIN_SHOW );
-            transition_back_to_login_panel(std::string());
-            // </FS:Ansariel>
-        default:
-            // <FS:Ansariel> [FS Login Panel]
-            //LLPanelLogin::giveFocus();
-            transition_back_to_login_panel(std::string());
-            // </FS:Ansariel> [FS Login Panel]
-            break;
+    case OPT_TRUST_CERT:
+    {
+        LLPointer<LLCertificate> cert = gSecAPIHandler->getCertificate(notification["payload"]["certificate"]);
+        LLPointer<LLCertificateStore> store = gSecAPIHandler->getCertificateStore(gSavedSettings.getString("CertStore"));
+        store->add(cert);
+        store->save();
+        LLStartUp::setStartupState( STATE_LOGIN_CLEANUP );
+        break;
+    }
+    case OPT_CANCEL_TRUST:
+        // <FS:Ansariel> That's what transition_back_to_login_panel is for and does!
+        //reset_login();
+        //gSavedSettings.setBOOL("AutoLogin", false);
+        //LLStartUp::setStartupState( STATE_LOGIN_SHOW );
+        transition_back_to_login_panel(std::string());
+        // </FS:Ansariel>
+    default:
+        // <FS:Ansariel> [FS Login Panel]
+        //LLPanelLogin::giveFocus();
+        transition_back_to_login_panel(std::string());
+        // </FS:Ansariel> [FS Login Panel]
+        break;
     }
 
 }
@@ -4795,14 +4922,14 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
     // unpack login data needed by the application
     text = response["agent_id"].asString();
     if(!text.empty()) gAgentID.set(text);
-//  gDebugInfo["AgentID"] = text;
-// [SL:KB] - Patch: Viewer-CrashReporting | Checked: 2010-11-16 (Catznip-2.6.0a) | Added: Catznip-2.4.0b
+    //  gDebugInfo["AgentID"] = text;
+    // [SL:KB] - Patch: Viewer-CrashReporting | Checked: 2010-11-16 (Catznip-2.6.0a) | Added: Catznip-2.4.0b
     if (gCrashSettings.getBOOL("CrashSubmitName"))
     {
         // Only include the agent UUID if the user consented
         gDebugInfo["AgentID"] = text;
     }
-// [/SL:KB]
+    // [/SL:KB]
 
     LLPerfStats::StatsRecorder::setEnabled(gSavedSettings.getBOOL("PerfStatsCaptureEnabled"));
     LLPerfStats::StatsRecorder::setFocusAv(gAgentID);
@@ -4813,7 +4940,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
 
     text = response["session_id"].asString();
     if(!text.empty()) gAgentSessionID.set(text);
-//  gDebugInfo["SessionID"] = text;
+    //  gDebugInfo["SessionID"] = text;
     LLAppViewer::instance()->recordSessionToMarker();
 
     // Session id needed for parcel info request in LLUrlEntryParcel
@@ -4938,7 +5065,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
         gFirstSimHandle = to_region_handle(region_x, region_y);
     }
 
-// <FS:CR> Aurora Sim
+    // <FS:CR> Aurora Sim
     text = response["region_size_x"].asString();
     if (!text.empty())
     {
@@ -4949,7 +5076,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
     //region Y size is currently unused, major refactoring required. - Patrick Sapinski (2/10/2011)
     text = response["region_size_y"].asString();
     if(!text.empty()) first_sim_size_y = strtoul(text.c_str(), NULL, 10);
-// </FS:CR> Aurora Sim
+    // </FS:CR> Aurora Sim
     const std::string look_at_str = response["look_at"];
     if (!look_at_str.empty())
     {
@@ -5002,9 +5129,9 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
     }
 
     // If MOTD has not been set by fsdata, fallback to LL MOTD
-// <FS:CR> FIRE-8571, FIRE-9274
+    // <FS:CR> FIRE-8571, FIRE-9274
     if (gAgent.mMOTD.empty() || !LLGridManager::getInstance()->isInSLMain())
-// </FS:CR>
+        // </FS:CR>
     {
         gAgent.mMOTD.assign(response["message"]);
     }
@@ -5041,7 +5168,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
         flag = login_flags["stipend_since_login"];
         if(flag == "Y")
         {
-            stipend_since_login = true;
+        stipend_since_login = true;
         }
         */
 
@@ -5097,7 +5224,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
         LL_INFOS("LLStartUp") << "map-server-url : no map-server-url answer, we use the default setting for the map : " << map_server_url << LL_ENDL;
     }
 
-// <FS:CR> FIRE-8063: Read Aurora web profile url from login data
+    // <FS:CR> FIRE-8063: Read Aurora web profile url from login data
 #ifdef OPENSIM
     std::string web_profile_url = response["web_profile_url"];
     if (!web_profile_url.empty())
@@ -5106,7 +5233,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
         LLGridManager::instance().setWebProfileUrl(web_profile_url);
         LL_INFOS("LLStartup") << "web-profile-url : we got an answer from the grid : " << web_profile_url << LL_ENDL;
     }
-// <FS:CR> FIRE-10567 - Set classified fee, if it's available.
+    // <FS:CR> FIRE-10567 - Set classified fee, if it's available.
     if (response.has("classified_fee"))
     {
         S32 classified_fee = response["classified_fee"];
@@ -5116,7 +5243,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
     {
         LLGridManager::getInstance()->setClassifiedFee(0);  // Free is a sensible default
     }
-// <FS:CR> Set a parcel listing fee, if it's available
+    // <FS:CR> Set a parcel listing fee, if it's available
     if (response.has("directory_fee"))
     {
         S32 directory_fee = response["directory_fee"];
@@ -5127,7 +5254,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
         LLGridManager::getInstance()->setDirectoryFee(0);
     }
 #endif // OPENSIM
-// </FS:CR>
+    // </FS:CR>
     // Default male and female avatars allowing the user to choose their avatar on first login.
     // These may be passed up by SLE to allow choice of enterprise avatars instead of the standard
     // "new ruth."  Not to be confused with 'initial-outfit' below
@@ -5228,7 +5355,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
     std::string prev_currency_symbol = Tea::getCurrency();
     // </COLOSI opensim multi-currency support>
 
-// <FS:AW opensim currency support>
+    // <FS:AW opensim currency support>
     std::string currency = "L$";
 #ifdef OPENSIM // <FS:AW optional opensim support>
     if(response.has("currency"))
@@ -5242,7 +5369,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
         LL_DEBUGS("OS_SETTINGS") << "no currency in login response" << LL_ENDL;
     }
     Tea::setCurrency(currency);
-// </FS:AW opensim currency support>
+    // </FS:AW opensim currency support>
 
     // <COLOSI  opensim multi-currency support>
     // Blank out the region currency which is set in in lfsimfeatureshandler
@@ -5255,7 +5382,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
     }
     // </COLOSI opensim multi-currency support>
 
-// <FS:AW  opensim destinations and avatar picker>
+    // <FS:AW  opensim destinations and avatar picker>
     if(response.has("avatar_picker_url"))
     {
         LL_DEBUGS("OS_SETTINGS") << "avatar_picker_url " << response["avatar_picker_url"] << LL_ENDL;
@@ -5273,9 +5400,9 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
     {
         LL_DEBUGS("OS_SETTINGS") << "no destination_guide_url in login response" << LL_ENDL;
     }
-// </FS:AW  opensim destinations and avatar picker>
+    // </FS:AW  opensim destinations and avatar picker>
 
-// <FS:CR> Legacy search killswitch!
+    // <FS:CR> Legacy search killswitch!
     if (LLGridManager::getInstance()->isInOpenSim())
     {
         LLFloaterReg::add("search", "floater_fs_search.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<FSFloaterSearch>);
@@ -5292,7 +5419,7 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
             LLFloaterReg::add("search", "floater_search.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterSearch>);
         }
     }
-// </FS:CR>
+    // </FS:CR>
 
     // <FS:Techwolf Lupindo> fsdata support
     if (FSData::instance().isAgentFlag(gAgentID, FSData::NO_USE))
@@ -5306,10 +5433,10 @@ bool process_login_success_response(U32 &first_sim_size_x, U32 &first_sim_size_y
     // JC: gesture loading done below, when we have an asset system
     // in place.  Don't delete/clear gUserCredentials until then.
     if(gAgentID.notNull()
-       && gAgentSessionID.notNull()
-       && gMessageSystem->mOurCircuitCode
-       && gFirstSim.isOk()
-       && gInventory.getRootFolderID().notNull())
+        && gAgentSessionID.notNull()
+        && gMessageSystem->mOurCircuitCode
+        && gFirstSim.isOk()
+        && gInventory.getRootFolderID().notNull())
     {
         success = true;
     }

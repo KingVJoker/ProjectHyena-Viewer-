@@ -1,29 +1,29 @@
 /**
- * @file llloginhandler.cpp
- * @brief Handles filling in the login panel information from a SLURL
- * such as secondlife:///app/login?first=Bob&last=Dobbs
- *
- * $LicenseInfo:firstyear=2008&license=viewerlgpl$
- * Second Life Viewer Source Code
- * Copyright (C) 2010, Linden Research, Inc.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation;
- * version 2.1 of the License only.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
- * $/LicenseInfo$
- */
+* @file llloginhandler.cpp
+* @brief Handles filling in the login panel information from a SLURL
+* such as secondlife:///app/login?first=Bob&last=Dobbs
+*
+* $LicenseInfo:firstyear=2008&license=viewerlgpl$
+* Second Life Viewer Source Code
+* Copyright (C) 2010, Linden Research, Inc.
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation;
+* version 2.1 of the License only.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*
+* Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
+* $/LicenseInfo$
+*/
 #include "llviewerprecompiledheaders.h"
 
 #include "llloginhandler.h"
@@ -67,7 +67,7 @@ void LLLoginHandler::parse(const LLSD& queryMap)
 
     if (queryMap.has("grid"))
     {
-      LLGridManager::getInstance()->setGridChoice(queryMap["grid"].asString());
+        LLGridManager::getInstance()->setGridChoice(queryMap["grid"].asString());
     }
 
 
@@ -75,23 +75,23 @@ void LLLoginHandler::parse(const LLSD& queryMap)
 
     if (startLocation == "specify")
     {
-      LLStartUp::setStartSLURL(LLSLURL(LLGridManager::getInstance()->getGridLoginID(),
-                       queryMap["region"].asString()));
+        LLStartUp::setStartSLURL(LLSLURL(LLGridManager::getInstance()->getGridLoginID(),
+            queryMap["region"].asString()));
     }
     else if (startLocation == "home")
     {
-      LLStartUp::setStartSLURL(LLSLURL(LLSLURL::SIM_LOCATION_HOME));
+        LLStartUp::setStartSLURL(LLSLURL(LLSLURL::SIM_LOCATION_HOME));
     }
     else if (startLocation == "last")
     {
-      LLStartUp::setStartSLURL(LLSLURL(LLSLURL::SIM_LOCATION_LAST));
+        LLStartUp::setStartSLURL(LLSLURL(LLSLURL::SIM_LOCATION_LAST));
     }
 }
 
 bool LLLoginHandler::handle(const LLSD& tokens,
-                            const LLSD& query_map,
-                            const std::string& grid,
-                            LLMediaCtrl* web)
+    const LLSD& query_map,
+    const std::string& grid,
+    LLMediaCtrl* web)
 {
     // do nothing if we are already logged in
     if (LLLoginInstance::getInstance()->authSuccess())
@@ -118,14 +118,14 @@ bool LLLoginHandler::handle(const LLSD& tokens,
 
     if  (LLStartUp::getStartupState() < STATE_LOGIN_CLEANUP)  //on splash page
     {
-      // as the login page may change from grid to grid, as well as
-      // things like username/password/etc, we simply refresh the
-      // login page to make sure everything is set up correctly
-      // <FS:Ansariel> [FS Login Panel]
-      //LLPanelLogin::loadLoginPage();
-      FSPanelLogin::loadLoginPage();
-      // </FS:Ansariel> [FS Login Panel]
-      LLStartUp::setStartupState( STATE_LOGIN_CLEANUP );
+        // as the login page may change from grid to grid, as well as
+        // things like username/password/etc, we simply refresh the
+        // login page to make sure everything is set up correctly
+        // <FS:Ansariel> [FS Login Panel]
+        //LLPanelLogin::loadLoginPage();
+        FSPanelLogin::loadLoginPage();
+        // </FS:Ansariel> [FS Login Panel]
+        LLStartUp::setStartupState( STATE_LOGIN_CLEANUP );
     }
     return true;
 }
@@ -148,10 +148,10 @@ LLPointer<LLCredential> LLLoginHandler::initializeLoginInfo()
     // <FS:CR>
     //if (result.isNull())
     //{
-        //// Since legacy viewer store login info one per grid, newer viewers have to
-        //// reuse same information to remember last user and for compatibility,
-        //// but otherwise login info is stored in separate map in gSecAPIHandler
-        //result = gSecAPIHandler->loadCredential(LLGridManager::getInstance()->getGrid());
+    //// Since legacy viewer store login info one per grid, newer viewers have to
+    //// reuse same information to remember last user and for compatibility,
+    //// but otherwise login info is stored in separate map in gSecAPIHandler
+    //result = gSecAPIHandler->loadCredential(LLGridManager::getInstance()->getGrid());
     //}
 
     return result;
@@ -160,15 +160,34 @@ LLPointer<LLCredential> LLLoginHandler::initializeLoginInfo()
 
 LLPointer<LLCredential> LLLoginHandler::loadSavedUserLoginInfo()
 {
-  // load the saved user login info into a LLCredential.
-  // perhaps this should be moved.
+    // load the saved user login info into a LLCredential.
+    // perhaps this should be moved.
     LLSD cmd_line_login = gSavedSettings.getLLSD("UserLoginInfoCmdLine");
     if (cmd_line_login.size() == 3)
     {
 
-        LLMD5 pass((unsigned char*)cmd_line_login[2].asString().c_str());
-        char md5pass[33];               /* Flawfinder: ignore */
-        pass.hex_digest(md5pass);
+        // ProjectHyena: the launcher can pass an already-hashed password prefixed with "HYENA_MD5:"
+        const std::string supplied_password = cmd_line_login[2].asString();
+        std::string       md5pass;
+        const std::string prehashed_prefix = "HYENA_MD5:";
+        if (supplied_password.compare(0, prehashed_prefix.size(), prehashed_prefix) == 0)
+        {
+            // Already an MD5 digest: do not hash it a second time.
+            md5pass = supplied_password.substr(prehashed_prefix.size());
+            if (md5pass.size() != 32)
+            {
+                LL_WARNS("Login") << "Invalid pre-hashed password length." << LL_ENDL;
+                return NULL;
+            }
+        }
+        else
+        {
+            // Standard viewer behaviour for passwords without the marker.
+            LLMD5 pass((unsigned char*)supplied_password.c_str());
+            char digest_buffer[33];               /* Flawfinder: ignore */
+            pass.hex_digest(digest_buffer);
+            md5pass = digest_buffer;
+        }
         LLSD identifier = LLSD::emptyMap();
         identifier["type"] = "agent";
         identifier["first_name"] = cmd_line_login[0];
@@ -181,7 +200,7 @@ LLPointer<LLCredential> LLLoginHandler::loadSavedUserLoginInfo()
         // yuck, we'll fix this with mani's changes.
         gSavedSettings.setBOOL("AutoLogin", true); // <FS:Ansariel> Re-added because handled via FSLoginDontSavePassword debug setting
         return gSecAPIHandler->createCredential(identifier["first_name"].asString() + " " + identifier["last_name"].asString() + "@" +LLGridManager::getInstance()->getGrid(),
-                                                identifier, authenticator);
+            identifier, authenticator);
     }
     // <FS:Zi> Fix --autologin by loading the currently selected credentials if the above fails.
     //         UserLoginInfo contains "First Last @ Grid" and gets set in LLPanelLogin::onClickConnect()

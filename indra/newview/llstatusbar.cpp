@@ -1519,7 +1519,7 @@ void LLStatusBar::updateParcelPanel()
     rect.mRight = left + rect.getWidth();
     rect.mLeft = left;
 
-    mParcelInfoPanel->setRect(rect);
+    // mParcelInfoPanel->setRect(rect); // Project Hyena: the launcher code places the location
 }
 
 void LLStatusBar::updateParcelInfoText()

@@ -12,44 +12,44 @@
 	positioning="centered"
 	save_rect="true"
 	single_instance="true"
-	title="Firestorm Search"
+	title="Search"
 	width="780">
-	<!-- Strings -->
-	<floater.string name="string.location">
-		Location: [LOCATION]
-	</floater.string>
-	<floater.string name="string.traffic">
-		Traffic: [DWELL]
-	</floater.string>
-	<floater.string name="string.area">
-		Area: [AREA]
-	</floater.string>
-	<floater.string name="string.members">
-		Members: [MEMBER_COUNT]
-	</floater.string>
-	<floater.string name="string.founder">
-		Founder: [FOUNDER]
-	</floater.string>
-	<floater.string name="string.age">
-		Age: [AGE]
-	</floater.string>
-	<floater.string name="string.partner">
-		Partner: [PARTNER]
-	</floater.string>
-	<floater.string name="string.listing_price">
-		Listing Price: [LISTING_PRICE]
-	</floater.string>
-	<floater.string name="string.slurl">
-		[SLURL]
-	</floater.string>
-	<floater.string name="string.duration">
-		Duration: [DURATION]
-	</floater.string>
-	<floater.string name="string.covercharge">
-		Cover: [COVERCHARGE]
-	</floater.string>
-	<!-- Tab time -->
-	<tab_container
+    <!-- Strings -->
+    <floater.string name="string.location">
+        Location: [LOCATION]
+    </floater.string>
+    <floater.string name="string.traffic">
+        Traffic: [DWELL]
+    </floater.string>
+    <floater.string name="string.area">
+        Area: [AREA]
+    </floater.string>
+    <floater.string name="string.members">
+        Members: [MEMBER_COUNT]
+    </floater.string>
+    <floater.string name="string.founder">
+        Founder: [FOUNDER]
+    </floater.string>
+    <floater.string name="string.age">
+        Age: [AGE]
+    </floater.string>
+    <floater.string name="string.partner">
+        Partner: [PARTNER]
+    </floater.string>
+    <floater.string name="string.listing_price">
+        Listing Price: [LISTING_PRICE]
+    </floater.string>
+    <floater.string name="string.slurl">
+        [SLURL]
+    </floater.string>
+    <floater.string name="string.duration">
+        Duration: [DURATION]
+    </floater.string>
+    <floater.string name="string.covercharge">
+        Cover: [COVERCHARGE]
+    </floater.string>
+    <!-- Tab time -->
+    <tab_container
 		layout="topleft"
 		follows="all"
 		top="1"
@@ -59,51 +59,51 @@
 		tab_position="top"
 		width="780"
 		height="585">
-		<panel
+        <panel
 			class="panel_ls_web"
 			filename="panel_fs_search_legacy_web.xml"
 			label="Websearch"
 			layout="topleft"
 			name="panel_ls_web" />
-		<panel
+        <panel
 			class="panel_ls_people"
 			filename="panel_fs_search_legacy_people.xml"
 			label="People"
 			layout="topleft"
 			name="panel_ls_people" />
-		<panel
+        <panel
 			class="panel_ls_groups"
 			filename="panel_fs_search_legacy_groups.xml"
 			label="Groups"
 			layout="topleft"
 			name="panel_ls_groups" />
-		<panel
+        <panel
 			class="panel_ls_places"
 			filename="panel_fs_search_legacy_places.xml"
 			label="Places"
 			layout="topleft"
 			name="panel_ls_places" />
-		<panel
+        <panel
 			class="panel_ls_land"
 			filename="panel_fs_search_legacy_land.xml"
 			label="Land Sales"
 			layout="topleft"
 			name="panel_ls_land" />
-		<panel
+        <panel
 			class="panel_ls_events"
 			filename="panel_fs_search_legacy_events.xml"
 			label="Events"
 			layout="topleft"
 			name="panel_ls_events" />
-		<panel
+        <panel
 			class="panel_ls_classifieds"
 			filename="panel_fs_search_legacy_classifieds.xml"
 			label="Classifieds"
 			layout="topleft"
 			name="panel_ls_classifieds" />
-	</tab_container>
-	<!-- Details/Action Panes -->
-	<panel
+    </tab_container>
+    <!-- Details/Action Panes -->
+    <panel
 		border="true"
 		follows="top|right|bottom"
 		height="508"
@@ -112,7 +112,7 @@
 		top="80"
 		width="366"
 		name="panel_ls_details">
-		<text_editor
+        <text_editor
 		left="12"
 		top="5"
 		height="24"
@@ -130,7 +130,7 @@
 		use_ellipses="true"
 		font="SansSerifHugeBold"
 		value="Undefined name" />
-		<texture_picker
+        <texture_picker
 		enabled="false"
 		fallback_image="Generic_Person_Large"
 		follows="left|top|right"
@@ -140,7 +140,7 @@
 		name="snapshot"
 		top_pad="4"
 		width="280"/>
-		<texture_picker
+        <texture_picker
 		enabled="false"
 		fallback_image="default_land_picture.j2c"
 		follows="left|top|right"
@@ -151,7 +151,7 @@
 		top_delta="0"
 		visible="false"
 		width="280"/>
-		<text_editor
+        <text_editor
 		left="20"
 		top_pad="2"
 		height="16"
@@ -169,7 +169,7 @@
 		allow_scroll="false"
 		parse_urls="true"
 		value="Auxilary info field 1"/>
-		<text_editor
+        <text_editor
 		left_pad="4"
 		top_delta="0"
 		height="16"
@@ -187,7 +187,7 @@
 		allow_scroll="false"
 		parse_urls="true"
 		value="Auxilary info field 2"/>
-		<icon
+        <icon
 		follows="top|right"
 		height="16"
 		image_name="Unknown_Icon"
@@ -196,7 +196,7 @@
 		top_pad="2"
 		name="maturity_icon"
 		width="18" />
-		<text_editor
+        <text_editor
 		left_pad="4"
 		top_delta="0"
 		height="28"
@@ -214,7 +214,7 @@
 		allow_scroll="false"
 		parse_urls="true"
 		value="Location info field"/>
-		<text_editor
+        <text_editor
 		left="20"
 		top_pad="12"
 		height="154"
@@ -232,7 +232,7 @@
 		max_length="1000"
 		trusted_content="false"
 		value="You unlock this door with the key of imagination. Beyond it is another dimension: a dimension of sound, a dimension of sight, a dimension of mind. You're moving into a land of both shadow and substance, of things and ideas; you've just crossed over into the Twilight Zone. What you are about to see is real; the litigants on the screen are not actors. They are genuine citizens who, having filed their claims in a real small claims court, have been persuaded to drop their suits there and have them settled here, in this forum... the People's Court."/>
-		<button
+        <button
 		layout="topleft"
 		follows="left|bottom"
 		height="23"
@@ -241,7 +241,7 @@
 		top="484"
 		left="3"
 		width="120" />
-		<button
+        <button
 		layout="topleft"
 		follows="left|bottom"
 		height="23"
@@ -249,7 +249,7 @@
 		name="people_message_btn"
 		width="120"
 		left_pad="1" />
-		<button
+        <button
 		layout="topleft"
 		follows="left|bottom"
 		height="23"
@@ -257,7 +257,7 @@
 		name="people_friend_btn"
 		width="120"
 		left_pad="1" />
-		<button
+        <button
 		layout="topleft"
 		follows="left|bottom"
 		height="23"
@@ -266,7 +266,7 @@
 		top="484"
 		left="3"
 		width="120" />
-		<button
+        <button
 		layout="topleft"
 		follows="left|bottom"
 		height="23"
@@ -274,7 +274,7 @@
 		name="group_message_btn"
 		width="120"
 		left_pad="1" />
-		<button
+        <button
 		layout="topleft"
 		follows="left|bottom"
 		height="23"
@@ -282,7 +282,7 @@
 		name="group_join_btn"
 		width="120"
 		left_pad="1" />
-		<button
+        <button
 		layout="topleft"
 		follows="left|bottom"
 		height="23"
@@ -291,7 +291,7 @@
 		top="484"
 		left="3"
 		width="120" />
-		<button
+        <button
 		layout="topleft"
 		follows="left|bottom"
 		height="23"
@@ -299,7 +299,7 @@
 		name="map_btn"
 		width="120"
 		left_pad="1" />
-		<button
+        <button
 		layout="topleft"
 		follows="left|bottom"
 		height="23"
@@ -307,7 +307,7 @@
 		name="event_reminder_btn"
 		width="120"
 		left_pad="1" />
-		<loading_indicator
+        <loading_indicator
 		left="134"
 		top="320"
 		follows="left|top|right"
@@ -318,20 +318,20 @@
 		height="100"
 		width="100"
 		visible="false" >
-			<images>
-				<image name="ProgressLarge_1"/>
-				<image name="ProgressLarge_2"/>
-				<image name="ProgressLarge_3"/>
-				<image name="ProgressLarge_4"/>
-				<image name="ProgressLarge_5"/>
-				<image name="ProgressLarge_6"/>
-				<image name="ProgressLarge_7"/>
-				<image name="ProgressLarge_8"/>
-				<image name="ProgressLarge_9"/>
-				<image name="ProgressLarge_10"/>
-				<image name="ProgressLarge_11"/>
-				<image name="ProgressLarge_12"/>
-			</images>
-		</loading_indicator>
-	</panel>
+            <images>
+                <image name="ProgressLarge_1"/>
+                <image name="ProgressLarge_2"/>
+                <image name="ProgressLarge_3"/>
+                <image name="ProgressLarge_4"/>
+                <image name="ProgressLarge_5"/>
+                <image name="ProgressLarge_6"/>
+                <image name="ProgressLarge_7"/>
+                <image name="ProgressLarge_8"/>
+                <image name="ProgressLarge_9"/>
+                <image name="ProgressLarge_10"/>
+                <image name="ProgressLarge_11"/>
+                <image name="ProgressLarge_12"/>
+            </images>
+        </loading_indicator>
+    </panel>
 </floater>

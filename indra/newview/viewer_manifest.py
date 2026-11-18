@@ -115,6 +115,9 @@ class ViewerManifest(LLManifest,FSViewerManifest):
 
                 # ... and the entire image filters directory
                 self.path("filters")
+                
+                # Project Hyena: destination guide pictures
+                self.path("hyena_destinations")
 
                 # ... and the included spell checking dictionaries
                 # <FS:LO> Copy dictionaries to a place where the viewer can find them if ran from visual studio
@@ -360,21 +363,21 @@ class ViewerManifest(LLManifest,FSViewerManifest):
 
         #<FS:ND> Don't separate name by whitespace. This break a lot of things in the old FS installer logic.
         #return CHANNEL_VENDOR_BASE + ' ' + app_suffix
-        return CHANNEL_VENDOR_BASE + app_suffix
+        return "ProjectHyena"
         #</FS:ND>
 
     def exec_name(self):
         # <FS:Ansariel> Same as app_name_oneword()
         #return "SecondLifeViewer"
-        return ''.join(self.app_name().split())
+        return "ProjectHyena"
 
     def app_name_oneword(self):
-        return ''.join(self.app_name().split())
+        return "ProjectHyena"
 
     # <FS:Ansariel> FIRE-30446: Set FriendlyAppName for protocol registrations
     def friendly_app_name(self):
         global CHANNEL_VENDOR_BASE
-        return CHANNEL_VENDOR_BASE
+        return "Project Hyena"
     # </FS:Ansariel>
 
     def icon_path(self):

@@ -9,8 +9,8 @@
  width="540"
  label="Advanced"
  name="advanced">
- <panel.string
-     name="aspect_ratio_text">
+    <panel.string
+        name="aspect_ratio_text">
         [NUM]:[DEN]
     </panel.string>
     <panel.string
@@ -31,7 +31,7 @@
      control_name="ForceShowGrid"
      follows="top|left"
      height="15"
-     label="Allow login to other grids (Not all grids will support Firestorm)"
+     label="Allow login to other grids (Not all grids will support Project Hyena)"
      layout="topleft"
      left="30"
      name="show_grid_selection_check"
@@ -125,4 +125,4 @@
          function="Pref.ClearSettings" />
     </button>
 
- </panel>
+</panel>

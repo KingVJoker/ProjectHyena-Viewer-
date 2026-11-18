@@ -86,6 +86,8 @@ if (HAVOK)
 endif ()
 
 set(viewer_SOURCE_FILES
+    lllauncherfloater.cpp
+    hyenapipeclient.cpp
 # <Add FS includes below this line>
     alfloaterregiontracker.cpp
     animationexplorer.cpp
@@ -949,6 +951,8 @@ set(VIEWER_BINARY_NAME "firestorm-bin" CACHE STRING
     "The name of the viewer executable to create.")
 
 set(viewer_HEADER_FILES
+    lllauncherfloater.h
+    hyenapipeclient.h
     CMakeLists.txt
     ViewerInstall.cmake
 

@@ -1,28 +1,28 @@
 /**
- * @file llwindowwin32.cpp
- * @brief Platform-dependent implementation of llwindow
- *
- * $LicenseInfo:firstyear=2001&license=viewerlgpl$
- * Second Life Viewer Source Code
- * Copyright (C) 2010, Linden Research, Inc.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation;
- * version 2.1 of the License only.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
- * $/LicenseInfo$
- */
+* @file llwindowwin32.cpp
+* @brief Platform-dependent implementation of llwindow
+*
+* $LicenseInfo:firstyear=2001&license=viewerlgpl$
+* Second Life Viewer Source Code
+* Copyright (C) 2010, Linden Research, Inc.
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation;
+* version 2.1 of the License only.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*
+* Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
+* $/LicenseInfo$
+*/
 
 #include "linden_common.h"
 
@@ -411,18 +411,18 @@ struct LLWindowWin32::LLWindowWin32Thread : public LL::ThreadPool
     }
 
     /**
-     * Like post(), Post() is a way of conveying a single work item to this
-     * thread. Its virtue is that it will definitely be executed "soon" rather
-     * than potentially waiting for the next frame: it uses PostMessage() to
-     * break us out of the window thread's blocked GetMessage() call. It's
-     * more expensive, though, not only from the Windows API latency of
-     * PostMessage() and GetMessage(), but also because it involves heap
-     * allocation and release.
-     *
-     * Require HWND from caller, even though we store an HWND locally.
-     * Otherwise, if our mWindowHandle was accessed from both threads, we'd
-     * have to protect it with a mutex.
-     */
+    * Like post(), Post() is a way of conveying a single work item to this
+    * thread. Its virtue is that it will definitely be executed "soon" rather
+    * than potentially waiting for the next frame: it uses PostMessage() to
+    * break us out of the window thread's blocked GetMessage() call. It's
+    * more expensive, though, not only from the Windows API latency of
+    * PostMessage() and GetMessage(), but also because it involves heap
+    * allocation and release.
+    *
+    * Require HWND from caller, even though we store an HWND locally.
+    * Otherwise, if our mWindowHandle was accessed from both threads, we'd
+    * have to protect it with a mutex.
+    */
     template <typename CALLABLE>
     void Post(HWND windowHandle, CALLABLE&& func)
     {
@@ -433,8 +433,8 @@ struct LLWindowWin32::LLWindowWin32Thread : public LL::ThreadPool
         auto ptr = new FuncType(std::move(func));
         WPARAM wparam{ 0xF1C };
         LL_DEBUGS("Window") << "PostMessage(" << std::hex << windowHandle
-                            << ", " << WM_POST_FUNCTION_
-                            << ", " << wparam << std::dec << LL_ENDL;
+            << ", " << WM_POST_FUNCTION_
+            << ", " << wparam << std::dec << LL_ENDL;
         PostMessage(windowHandle, WM_POST_FUNCTION_, wparam, LPARAM(ptr));
     }
 
@@ -443,15 +443,15 @@ struct LLWindowWin32::LLWindowWin32Thread : public LL::ThreadPool
     {
         // post into thread's queue to avoid threading issues
         post([this]()
-        {
-            if (!mWindowTimeout)
             {
-                mWindowTimeout = std::make_unique<LLWatchdogTimeout>("WindowThread");
-                // supposed to be executed within run(),
-                // so no point checking if thread is alive
-                resumeTimeout("TimeoutInit");
-            }
-        });
+                if (!mWindowTimeout)
+                {
+                    mWindowTimeout = std::make_unique<LLWatchdogTimeout>("WindowThread");
+                    // supposed to be executed within run(),
+                    // so no point checking if thread is alive
+                    resumeTimeout("TimeoutInit");
+                }
+            });
     }
 
     // For mainWindowProc, it should not unpause watchdog if it was paused
@@ -508,15 +508,15 @@ private:
 
 
 LLWindowWin32::LLWindowWin32(LLWindowCallbacks* callbacks,
-                             const std::string& title, const std::string& name, S32 x, S32 y, S32 width,
-                             S32 height, U32 flags,
-                             bool fullscreen, bool clearBg,
-                             bool enable_vsync, bool use_gl,
-                             bool ignore_pixel_depth,
-                             U32 fsaa_samples,
-                             U32 max_cores,
-                             F32 max_gl_version,
-                             bool useLegacyCursors) // <FS:LO> Legacy cursor setting from main program
+    const std::string& title, const std::string& name, S32 x, S32 y, S32 width,
+    S32 height, U32 flags,
+    bool fullscreen, bool clearBg,
+    bool enable_vsync, bool use_gl,
+    bool ignore_pixel_depth,
+    U32 fsaa_samples,
+    U32 max_cores,
+    F32 max_gl_version,
+    bool useLegacyCursors) // <FS:LO> Legacy cursor setting from main program
     :
     LLWindow(callbacks, fullscreen, flags),
     mAbsoluteCursorPosition(false),
@@ -551,7 +551,7 @@ LLWindowWin32::LLWindowWin32(LLWindowCallbacks* callbacks,
     setThreadPriorityHigh();
 
 #if 0 // this is probably a bad idea, but keep it in your back pocket if you see what looks like
-        // process deprioritization during profiles
+    // process deprioritization during profiles
     // force high thread priority
     HANDLE hProcess = GetCurrentProcess();
 
@@ -661,7 +661,7 @@ LLWindowWin32::LLWindowWin32(LLWindowCallbacks* callbacks,
         IID_IDirectInput8, // REFIID riidltf,
         (LPVOID*)&di8_interface, // LPVOID * ppvOut,
         NULL                     // LPUNKNOWN punkOuter
-        );
+    );
     if (status == DI_OK)
     {
         gDirectInput8 = di8_interface;
@@ -714,11 +714,11 @@ LLWindowWin32::LLWindowWin32(LLWindowCallbacks* callbacks,
         // background color is not used
         if (clearBg)
         {
-            wc.hbrBackground = (HBRUSH) GetStockObject(WHITE_BRUSH);
+            wc.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH); // Project Hyena: black instead of a white flash at start
         }
         else
         {
-            wc.hbrBackground = (HBRUSH) NULL;
+            wc.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH); // Project Hyena: black, not white, before the first frame
         }
 
         // we don't use windows menus
@@ -895,7 +895,7 @@ LLWindowWin32::LLWindowWin32(LLWindowCallbacks* callbacks,
     //-----------------------------------------------------------------------
     LLCoordScreen windowPos(x,y);
     LLCoordScreen windowSize(window_rect.right - window_rect.left,
-                             window_rect.bottom - window_rect.top);
+        window_rect.bottom - window_rect.top);
     if (!switchContext(mFullscreen, windowSize, enable_vsync, &windowPos))
     {
         return;
@@ -972,6 +972,35 @@ void LLWindowWin32::restore()
     ShowWindow(mWindowHandle, SW_RESTORE);
     SetForegroundWindow(mWindowHandle);
     SetFocus(mWindowHandle);
+}
+
+// Project Hyena: switches the Windows title bar off (our own bar is drawn in the launcher) and on again.
+// caption_height = height of our bar, menu_left..menu_right = where the Me / Help menu sits,
+// buttons_width = width of the minimize / maximize / close buttons. All in window pixels.
+void LLWindowWin32::setCustomFrame(bool enable, S32 caption_height, S32 menu_left, S32 menu_right, S32 buttons_width)
+{
+    mCaptionHeight = caption_height;
+    mMenuLeft      = menu_left;
+    mMenuRight     = menu_right;
+    mButtonsWidth  = buttons_width;
+
+    if (!mWindowHandle || (enable && mFullscreen))
+    {
+        return;
+    }
+    if (mCustomFrame.exchange(enable) == enable)
+    {
+        return; // nothing changed
+    }
+    HWND hwnd = mWindowHandle;
+    mWindowThread->post(
+        [hwnd, enable]()
+        {
+            // makes Windows ask again how big the client area is (see WM_NCCALCSIZE)
+            SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+            MARGINS margins = { 0, 0, enable ? 1 : 0, 0 }; // 1 px keeps the window shadow
+            DwmExtendFrameIntoClientArea(hwnd, &margins);
+        });
 }
 
 // See SL-12170
@@ -1399,21 +1428,21 @@ bool LLWindowWin32::switchContext(bool fullscreen, const LLCoordScreen& size, bo
     static PIXELFORMATDESCRIPTOR pfd =
     {
         sizeof(PIXELFORMATDESCRIPTOR),
-            1,
-            PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
-            PFD_TYPE_RGBA,
-            BITS_PER_PIXEL,
-            0, 0, 0, 0, 0, 0,   // RGB bits and shift, unused
-            8,                  // alpha bits
-            0,                  // alpha shift
-            0,                  // accum bits
-            0, 0, 0, 0,         // accum RGBA
-            24,                 // depth bits
-            8,                  // stencil bits, avi added for stencil test
-            0,
-            PFD_MAIN_PLANE,
-            0,
-            0, 0, 0
+        1,
+        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+        PFD_TYPE_RGBA,
+        BITS_PER_PIXEL,
+        0, 0, 0, 0, 0, 0,   // RGB bits and shift, unused
+        8,                  // alpha bits
+        0,                  // alpha shift
+        0,                  // accum bits
+        0, 0, 0, 0,         // accum RGBA
+        24,                 // depth bits
+        8,                  // stencil bits, avi added for stencil test
+        0,
+        PFD_MAIN_PLANE,
+        0,
+        0, 0, 0
     };
 
     if (!mhDC)
@@ -1652,7 +1681,7 @@ bool LLWindowWin32::switchContext(bool fullscreen, const LLCoordScreen& size, bo
 
         S32 swap_method = 0;
         S32   cur_format  = 0;
-const   S32   max_format  = (S32)num_formats - 1;
+        const   S32   max_format  = (S32)num_formats - 1;
         GLint swap_query = WGL_SWAP_METHOD_ARB;
 
         // SL-14705 Fix name tags showing in front of objects with AMD GPUs.
@@ -1817,9 +1846,9 @@ const   S32   max_format  = (S32)num_formats - 1;
     // *HACK: Attempt to prevent startup crashes by deferring memory accounting
     // until after some graphics setup. See SL-20177. -Cosmic,2023-09-18
     mWindowThread->post([=]()
-    {
-        mWindowThread->glReady();
-    });
+        {
+            mWindowThread->glReady();
+        });
 
     if (auto_show)
     {
@@ -1851,73 +1880,73 @@ void LLWindowWin32::recreateWindow(RECT window_rect, DWORD dw_ex_style, DWORD dw
     // What follows must be done on the window thread.
     auto window_work =
         [this,
-         self=mWindowThread,
-         oldWindowHandle,
-         oldDCHandle,
-         // bind CreateWindowEx() parameters by value instead of
-         // back-referencing LLWindowWin32 members
-         windowClassName=mWindowClassName,
-         windowTitle=mWindowTitle,
-         hInstance=mhInstance,
-         window_rect,
-         dw_ex_style,
-         dw_style,
-         &promise]
+        self=mWindowThread,
+        oldWindowHandle,
+        oldDCHandle,
+        // bind CreateWindowEx() parameters by value instead of
+        // back-referencing LLWindowWin32 members
+        windowClassName=mWindowClassName,
+        windowTitle=mWindowTitle,
+        hInstance=mhInstance,
+        window_rect,
+        dw_ex_style,
+        dw_style,
+        &promise]
         ()
+    {
+        LL_DEBUGS("Window") << "recreateWindow(): window_work entry" << LL_ENDL;
+        self->mWindowHandleThrd = 0;
+        self->mhDCThrd = 0;
+
+        if (oldWindowHandle)
         {
-            LL_DEBUGS("Window") << "recreateWindow(): window_work entry" << LL_ENDL;
-            self->mWindowHandleThrd = 0;
+            if (oldDCHandle && !ReleaseDC(oldWindowHandle, oldDCHandle))
+            {
+                LL_WARNS("Window") << "Failed to ReleaseDC" << LL_ENDL;
+            }
+
+            // important to call DestroyWindow() from the window thread
+            if (!destroy_window_handler(oldWindowHandle))
+            {
+
+                LL_WARNS("Window") << "Failed to properly close window before recreating it!"
+                    << LL_ENDL;
+            }
+        }
+
+        auto handle = CreateWindowEx(dw_ex_style,
+            windowClassName,
+            windowTitle,
+            WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dw_style,
+            window_rect.left,                               // x pos
+            window_rect.top,                                // y pos
+            window_rect.right - window_rect.left,           // width
+            window_rect.bottom - window_rect.top,           // height
+            NULL,
+            NULL,
+            hInstance,
+            NULL);
+
+        if (! handle)
+        {
+            // Failed to create window: clear the variables. This
+            // assignment is valid because we're running on mWindowThread.
+            self->mWindowHandleThrd = NULL;
             self->mhDCThrd = 0;
+        }
+        else
+        {
+            // Update mWindowThread's own mWindowHandle and mhDC.
+            self->mWindowHandleThrd = handle;
+            self->mhDCThrd = GetDC(handle);
+        }
 
-            if (oldWindowHandle)
-            {
-                if (oldDCHandle && !ReleaseDC(oldWindowHandle, oldDCHandle))
-                {
-                    LL_WARNS("Window") << "Failed to ReleaseDC" << LL_ENDL;
-                }
+        updateWindowRect();
 
-                // important to call DestroyWindow() from the window thread
-                if (!destroy_window_handler(oldWindowHandle))
-                {
-
-                    LL_WARNS("Window") << "Failed to properly close window before recreating it!"
-                        << LL_ENDL;
-                }
-            }
-
-            auto handle = CreateWindowEx(dw_ex_style,
-                windowClassName,
-                windowTitle,
-                WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dw_style,
-                window_rect.left,                               // x pos
-                window_rect.top,                                // y pos
-                window_rect.right - window_rect.left,           // width
-                window_rect.bottom - window_rect.top,           // height
-                NULL,
-                NULL,
-                hInstance,
-                NULL);
-
-            if (! handle)
-            {
-                // Failed to create window: clear the variables. This
-                // assignment is valid because we're running on mWindowThread.
-                self->mWindowHandleThrd = NULL;
-                self->mhDCThrd = 0;
-            }
-            else
-            {
-                // Update mWindowThread's own mWindowHandle and mhDC.
-                self->mWindowHandleThrd = handle;
-                self->mhDCThrd = GetDC(handle);
-            }
-
-            updateWindowRect();
-
-            // It's important to wake up the future either way.
-            promise.set_value(std::make_pair(self->mWindowHandleThrd, self->mhDCThrd));
-            LL_DEBUGS("Window") << "recreateWindow(): window_work done" << LL_ENDL;
-        };
+        // It's important to wake up the future either way.
+        promise.set_value(std::make_pair(self->mWindowHandleThrd, self->mhDCThrd));
+        LL_DEBUGS("Window") << "recreateWindow(): window_work done" << LL_ENDL;
+    };
     // But how we pass window_work to the window thread depends on whether we
     // already have a window handle.
     if (!oldWindowHandle)
@@ -1944,6 +1973,29 @@ void LLWindowWin32::recreateWindow(RECT window_rect, DWORD dw_ex_style, DWORD dw
     mhDC = pair.second;
 
     sWindowHandleForMessageBox = mWindowHandle;
+
+    // Project Hyena: start without the Windows title bar, so the standard frame never shows before the launcher
+    // is up. The launcher later sets the exact bar size and menu area through setCustomFrame().
+    if (mWindowHandle && !mFullscreen)
+    {
+        typedef UINT(WINAPI * GetDpiForWindowFn)(HWND);
+        static GetDpiForWindowFn get_dpi = (GetDpiForWindowFn)GetProcAddress(GetModuleHandleW(L"user32.dll"), "GetDpiForWindow");
+        const int                dpi     = get_dpi ? (int)get_dpi(mWindowHandle) : 96;
+        if (mCaptionHeight == 0)
+        {
+            mCaptionHeight = MulDiv(34, dpi, 96);
+            mButtonsWidth  = MulDiv(140, dpi, 96);
+        }
+        mCustomFrame = true;
+        HWND hwnd    = mWindowHandle;
+        mWindowThread->post(
+            [hwnd]()
+            {
+                SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+                MARGINS margins = { 0, 0, 1, 0 };
+                DwmExtendFrameIntoClientArea(hwnd, &margins);
+            });
+    }
 }
 
 void* LLWindowWin32::createSharedContext()
@@ -2198,11 +2250,11 @@ bool LLWindowWin32::isCursorHidden()
 HCURSOR LLWindowWin32::loadColorCursor(LPCTSTR name)
 {
     return (HCURSOR)LoadImage(mhInstance,
-                              name,
-                              IMAGE_CURSOR,
-                              0,    // default width
-                              0,    // default height
-                              LR_DEFAULTCOLOR);
+        name,
+        IMAGE_CURSOR,
+        0,    // default width
+        0,    // default height
+        LR_DEFAULTCOLOR);
 }
 
 //void LLWindowWin32::initCursors()
@@ -2725,14 +2777,14 @@ LRESULT CALLBACK LLWindowWin32::mainWindowProc(HWND h_wnd, UINT u_msg, WPARAM w_
                 || (end_session_flags & ENDSESSION_LOGOFF)) // logoff, can delay shutdown
             {
                 window_imp->post([=]()
-                {
-                    // Check if app needs cleanup or can be closed immediately.
-                    if (window_imp->mCallbacks->handleSessionExit(window_imp))
                     {
-                        // Get the app to initiate cleanup.
-                        window_imp->mCallbacks->handleQuit(window_imp);
-                    }
-                });
+                        // Check if app needs cleanup or can be closed immediately.
+                        if (window_imp->mCallbacks->handleSessionExit(window_imp))
+                        {
+                            // Get the app to initiate cleanup.
+                            window_imp->mCallbacks->handleQuit(window_imp);
+                        }
+                    });
                 // Give app a second to finish up. That's not enough for a clean exit,
                 // but better than nothing.
                 // Todo: sync this better, some kind of waitForResult? Can't wait forever,
@@ -2786,18 +2838,18 @@ LRESULT CALLBACK LLWindowWin32::mainWindowProc(HWND h_wnd, UINT u_msg, WPARAM w_
         {
             LL_PROFILE_ZONE_NAMED_CATEGORY_WIN32("mwp - WM_KEYUP");
             window_imp->post([=]()
-            {
-                window_imp->mKeyScanCode = (l_param >> 16) & 0xff;
-                window_imp->mKeyVirtualKey = (U32)w_param;
-                window_imp->mRawMsg = u_msg;
-                window_imp->mRawWParam = (U32)w_param;
-                window_imp->mRawLParam = (U32)l_param;
-
                 {
-                    LL_PROFILE_ZONE_NAMED_CATEGORY_WIN32("mwp - WM_KEYUP");
-                    gKeyboard->handleKeyUp((U16)w_param, mask);
-                }
-            });
+                    window_imp->mKeyScanCode = (l_param >> 16) & 0xff;
+                    window_imp->mKeyVirtualKey = (U32)w_param;
+                    window_imp->mRawMsg = u_msg;
+                    window_imp->mRawWParam = (U32)w_param;
+                    window_imp->mRawLParam = (U32)l_param;
+
+                    {
+                        LL_PROFILE_ZONE_NAMED_CATEGORY_WIN32("mwp - WM_KEYUP");
+                        gKeyboard->handleKeyUp((U16)w_param, mask);
+                    }
+                });
             if (eat_keystroke) return 0;    // skip DefWindowProc() handling if we're consuming the keypress
             break;
         }
@@ -3170,9 +3222,9 @@ LRESULT CALLBACK LLWindowWin32::mainWindowProc(HWND h_wnd, UINT u_msg, WPARAM w_
                 {
                     LL_PROFILE_ZONE_NAMED_CATEGORY_WIN32("mwp - WM_MOUSEMOVE lambda");
 
-                    MASK mask = gKeyboard->currentMask(true);
-                    window_imp->mMouseMask = mask;
-                    window_imp->mCursorPosition = window_coord;
+            MASK mask = gKeyboard->currentMask(true);
+            window_imp->mMouseMask = mask;
+            window_imp->mCursorPosition = window_coord;
                 });
             return 0;
         }
@@ -3208,30 +3260,30 @@ LRESULT CALLBACK LLWindowWin32::mainWindowProc(HWND h_wnd, UINT u_msg, WPARAM w_
             if (w_param == SIZE_RESTORED && window_imp->mLastSizeWParam != SIZE_RESTORED)
             {
                 window_imp->post([=]()
-                {
-                    window_imp->setThreadPriorityHigh();
-                    window_imp->mCallbacks->handleActivate(window_imp, true);
-                });
+                    {
+                        window_imp->setThreadPriorityHigh();
+                        window_imp->mCallbacks->handleActivate(window_imp, true);
+                    });
             }
 
             // handle case of window being maximized from fully minimized state
             if (w_param == SIZE_MAXIMIZED && window_imp->mLastSizeWParam != SIZE_MAXIMIZED)
             {
                 window_imp->post([=]()
-                {
-                    window_imp->setThreadPriorityHigh();
-                    window_imp->mCallbacks->handleActivate(window_imp, true);
-                });
+                    {
+                        window_imp->setThreadPriorityHigh();
+                        window_imp->mCallbacks->handleActivate(window_imp, true);
+                    });
             }
 
             // Also handle the minimization case
             if (w_param == SIZE_MINIMIZED && window_imp->mLastSizeWParam != SIZE_MINIMIZED)
             {
                 window_imp->post([=]()
-                {
-                    window_imp->setThreadPriorityNormal();
-                    window_imp->mCallbacks->handleActivate(window_imp, false);
-                });
+                    {
+                        window_imp->setThreadPriorityNormal();
+                        window_imp->mCallbacks->handleActivate(window_imp, false);
+                    });
             }
 
             // Actually resize all of our views
@@ -3317,8 +3369,8 @@ LRESULT CALLBACK LLWindowWin32::mainWindowProc(HWND h_wnd, UINT u_msg, WPARAM w_
 
                 window_imp->post([=]()
                     {
-                       window_imp->mCallbacks->handleDataCopy(window_imp, (S32)myType, data);
-                       delete[] data;
+                        window_imp->mCallbacks->handleDataCopy(window_imp, (S32)myType, data);
+                        delete[] data;
                     });
             };
             return 0;
@@ -3424,14 +3476,86 @@ LRESULT CALLBACK LLWindowWin32::mainWindowProc(HWND h_wnd, UINT u_msg, WPARAM w_
         }
         break;
 
-        //list of messages we get often that we don't care to log about
+        case WM_NCCALCSIZE:
+        {
+            if (window_imp->mCustomFrame && w_param == TRUE)
+            {
+                // No Windows title bar or border: the whole window is client area
+                NCCALCSIZE_PARAMS* params = (NCCALCSIZE_PARAMS*)l_param;
+                if (IsZoomed(h_wnd))
+                {
+                    // a maximized window hangs over the screen edges by the frame size; pull it back in
+                    const int fx = GetSystemMetrics(SM_CXFRAME) + GetSystemMetrics(SM_CXPADDEDBORDER);
+                    const int fy = GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CXPADDEDBORDER);
+                    params->rgrc[0].left += fx;
+                    params->rgrc[0].right -= fx;
+                    params->rgrc[0].top += fy;
+                    params->rgrc[0].bottom -= fy;
+                }
+                return 0;
+            }
+        }
+        break;
         case WM_NCHITTEST:
+        {
+            if (!window_imp->mCustomFrame)
+            {
+                break; // normal Windows title bar: let Windows decide
+            }
+            RECT wr;
+            GetWindowRect(h_wnd, &wr);
+            const int x = (short)LOWORD(l_param) - wr.left;
+            const int y = (short)HIWORD(l_param) - wr.top;
+            const int w = wr.right - wr.left;
+            const int h = wr.bottom - wr.top;
+            // thickness of the resize border (GetDpiForWindow is looked up at run time, older SDKs do not declare it)
+            typedef UINT(WINAPI * GetDpiForWindowFn)(HWND);
+            static GetDpiForWindowFn get_dpi = (GetDpiForWindowFn)GetProcAddress(GetModuleHandleW(L"user32.dll"), "GetDpiForWindow");
+            const int                edge    = MulDiv(8, get_dpi ? (int)get_dpi(h_wnd) : 96, 96);
+
+            if (!IsZoomed(h_wnd))
+            {
+                const bool l = x < edge, r = x >= w - edge, t = y < edge, b = y >= h - edge;
+                if (t && l)
+                    return HTTOPLEFT;
+                if (t && r)
+                    return HTTOPRIGHT;
+                if (b && l)
+                    return HTBOTTOMLEFT;
+                if (b && r)
+                    return HTBOTTOMRIGHT;
+                if (l)
+                    return HTLEFT;
+                if (r)
+                    return HTRIGHT;
+                if (t)
+                    return HTTOP;
+                if (b)
+                    return HTBOTTOM;
+            }
+            if (y < window_imp->mCaptionHeight)
+            {
+                if (x >= window_imp->mMenuLeft && x < window_imp->mMenuRight)
+                {
+                    return HTCLIENT; // the Me / Help menu
+                }
+                if (x >= w - window_imp->mButtonsWidth)
+                {
+                    return HTCLIENT; // minimize / maximize / close buttons
+                }
+                return HTCAPTION; // empty part of the bar: drag the window, double-click maximizes
+            }
+            return HTCLIENT;
+        }
+        break;
+
+        //list of messages we get often that we don't care to log about
         case WM_NCMOUSEMOVE:
         case WM_NCMOUSELEAVE:
         case WM_MOVING:
         case WM_WINDOWPOSCHANGING:
         case WM_WINDOWPOSCHANGED:
-        break;
+            break;
 
         default:
         {
@@ -3718,23 +3842,23 @@ void LLWindowWin32::flashIcon(F32 seconds)
     //}
 
     mWindowThread->post([=]()
-    {
-        if (mWindowHandle && (GetFocus() != mWindowHandle || GetForegroundWindow() != mWindowHandle))
         {
-            FLASHWINFO flash_info;
+            if (mWindowHandle && (GetFocus() != mWindowHandle || GetForegroundWindow() != mWindowHandle))
+            {
+                FLASHWINFO flash_info;
 
-            flash_info.cbSize = sizeof(FLASHWINFO);
-            flash_info.hwnd = mWindowHandle;
-            flash_info.dwFlags = FLASHW_TRAY;
-            // <FS:Ansariel> FIRE-23498: Tray icon flash functions randomly
-            //flash_info.uCount = UINT(seconds / ICON_FLASH_TIME);
-            //flash_info.dwTimeout = DWORD(1000.f * ICON_FLASH_TIME); // milliseconds
-            flash_info.uCount = UINT(ll_round(seconds / ICON_FLASH_TIME));
-            flash_info.dwTimeout = DWORD(ll_round(1000.f * ICON_FLASH_TIME)); // milliseconds
-            // </FS:Ansariel>
-            FlashWindowEx(&flash_info);
-        }
-    });
+                flash_info.cbSize = sizeof(FLASHWINFO);
+                flash_info.hwnd = mWindowHandle;
+                flash_info.dwFlags = FLASHW_TRAY;
+                // <FS:Ansariel> FIRE-23498: Tray icon flash functions randomly
+                //flash_info.uCount = UINT(seconds / ICON_FLASH_TIME);
+                //flash_info.dwTimeout = DWORD(1000.f * ICON_FLASH_TIME); // milliseconds
+                flash_info.uCount = UINT(ll_round(seconds / ICON_FLASH_TIME));
+                flash_info.dwTimeout = DWORD(ll_round(1000.f * ICON_FLASH_TIME)); // milliseconds
+                // </FS:Ansariel>
+                FlashWindowEx(&flash_info);
+            }
+        });
     // </FS:Ansariel>
 }
 
@@ -3976,7 +4100,7 @@ void LLWindowWin32::swapBuffers()
 // LLSplashScreenImp
 //
 LLSplashScreenWin32::LLSplashScreenWin32()
-:   mWindow(NULL)
+    :   mWindow(NULL)
 {
 }
 
@@ -3993,6 +4117,17 @@ void LLSplashScreenWin32::showImpl()
         TEXT("SPLASHSCREEN"),
         NULL,   // no parent
         (DLGPROC) LLSplashScreenWin32::windowProc);
+    // Project Hyena: take the raised dialog frame (the light outline) off, so the whole box is charcoal
+    if (mWindow)
+    {
+        LONG_PTR ex_style = GetWindowLongPtr(mWindow, GWL_EXSTYLE);
+        ex_style &= ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE);
+        SetWindowLongPtr(mWindow, GWL_EXSTYLE, ex_style);
+        LONG_PTR style = GetWindowLongPtr(mWindow, GWL_STYLE);
+        style &= ~(WS_BORDER | WS_DLGFRAME | WS_CAPTION | WS_THICKFRAME);
+        SetWindowLongPtr(mWindow, GWL_STYLE, style);
+        SetWindowPos(mWindow, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    }
     ShowWindow(mWindow, SW_SHOW);
 
     // Should set taskbar text without creating a header for the window (caption)
@@ -4039,8 +4174,21 @@ void LLSplashScreenWin32::hideImpl()
 
 // static
 LRESULT CALLBACK LLSplashScreenWin32::windowProc(HWND h_wnd, UINT u_msg,
-                                            WPARAM w_param, LPARAM l_param)
+    WPARAM w_param, LPARAM l_param)
 {
+    // Project Hyena: dark splash box instead of the white Windows dialog
+    static HBRUSH splash_brush = CreateSolidBrush(RGB(40, 42, 46)); // charcoal
+    switch (u_msg)
+    {
+    case WM_CTLCOLORDLG:
+        return (LRESULT)splash_brush;
+    case WM_CTLCOLORSTATIC:
+        SetTextColor((HDC)w_param, RGB(230, 240, 248));
+        SetBkColor((HDC)w_param, RGB(40, 42, 46));
+        return (LRESULT)splash_brush;
+    default:
+        break;
+    }
     // Just give it to windows
     return DefWindowProc(h_wnd, u_msg, w_param, l_param);
 }
@@ -4081,9 +4229,9 @@ S32 OSMessageBoxWin32(const std::string& text, const std::string& caption, U32 t
         sWindowHandleForMessageBox = NULL;
     }
     int retval_win = MessageBoxW(sWindowHandleForMessageBox, // HWND
-                                 ll_convert_string_to_wide(text).c_str(),
-                                 ll_convert_string_to_wide(caption).c_str(),
-                                 uType);
+        ll_convert_string_to_wide(text).c_str(),
+        ll_convert_string_to_wide(caption).c_str(),
+        uType);
     S32 retval;
 
     switch(retval_win)
@@ -4160,8 +4308,8 @@ void LLWindowWin32::spawnWebBrowser(const std::string& escaped_url, bool async)
 }
 
 /*
-    Make the raw keyboard data available - used to poke through to LLQtWebKit so
-    that Qt/Webkit has access to the virtual keycodes etc. that it needs
+Make the raw keyboard data available - used to poke through to LLQtWebKit so
+that Qt/Webkit has access to the virtual keycodes etc. that it needs
 */
 LLSD LLWindowWin32::getNativeKeyData()
 {
@@ -4264,49 +4412,49 @@ void LLWindowWin32::allowLanguageTextInput(LLPreeditor *preeditor, bool b)
     if (sLanguageTextInputAllowed)
     {
         mWindowThread->post([=]()
-        {
-            // Allowing: Restore the previous IME status, so that the user has a feeling that the previous
-            // text input continues naturally.  Be careful, however, the IME status is meaningful only during the user keeps
-            // using same Input Locale (aka Keyboard Layout).
-            if (sWinIMEOpened && GetKeyboardLayout(0) == sWinInputLocale)
             {
-                HIMC himc = LLWinImm::getContext(mWindowHandle);
-                LLWinImm::setOpenStatus(himc, true);
-                LLWinImm::setConversionStatus(himc, sWinIMEConversionMode, sWinIMESentenceMode);
-                LLWinImm::releaseContext(mWindowHandle, himc);
-            }
-        });
+                // Allowing: Restore the previous IME status, so that the user has a feeling that the previous
+                // text input continues naturally.  Be careful, however, the IME status is meaningful only during the user keeps
+                // using same Input Locale (aka Keyboard Layout).
+                if (sWinIMEOpened && GetKeyboardLayout(0) == sWinInputLocale)
+                {
+                    HIMC himc = LLWinImm::getContext(mWindowHandle);
+                    LLWinImm::setOpenStatus(himc, true);
+                    LLWinImm::setConversionStatus(himc, sWinIMEConversionMode, sWinIMESentenceMode);
+                    LLWinImm::releaseContext(mWindowHandle, himc);
+                }
+            });
     }
     else
     {
         mWindowThread->post([=]()
-        {
-            // Disallowing: Turn off the IME so that succeeding key events bypass IME and come to us directly.
-            // However, do it after saving the current IME  status.  We need to restore the status when
-            //   allowing language text input again.
-            sWinInputLocale = GetKeyboardLayout(0);
-            sWinIMEOpened = LLWinImm::isIME(sWinInputLocale);
-            if (sWinIMEOpened)
             {
-                HIMC himc = LLWinImm::getContext(mWindowHandle);
-                sWinIMEOpened = LLWinImm::getOpenStatus(himc);
+                // Disallowing: Turn off the IME so that succeeding key events bypass IME and come to us directly.
+                // However, do it after saving the current IME  status.  We need to restore the status when
+                //   allowing language text input again.
+                sWinInputLocale = GetKeyboardLayout(0);
+                sWinIMEOpened = LLWinImm::isIME(sWinInputLocale);
                 if (sWinIMEOpened)
                 {
-                    LLWinImm::getConversionStatus(himc, &sWinIMEConversionMode, &sWinIMESentenceMode);
+                    HIMC himc = LLWinImm::getContext(mWindowHandle);
+                    sWinIMEOpened = LLWinImm::getOpenStatus(himc);
+                    if (sWinIMEOpened)
+                    {
+                        LLWinImm::getConversionStatus(himc, &sWinIMEConversionMode, &sWinIMESentenceMode);
 
-                    // We need both ImmSetConversionStatus and ImmSetOpenStatus here to surely disable IME's
-                    // keyboard hooking, because Some IME reacts only on the former and some other on the latter...
-                    LLWinImm::setConversionStatus(himc, IME_CMODE_NOCONVERSION, sWinIMESentenceMode);
-                    LLWinImm::setOpenStatus(himc, false);
+                        // We need both ImmSetConversionStatus and ImmSetOpenStatus here to surely disable IME's
+                        // keyboard hooking, because Some IME reacts only on the former and some other on the latter...
+                        LLWinImm::setConversionStatus(himc, IME_CMODE_NOCONVERSION, sWinIMESentenceMode);
+                        LLWinImm::setOpenStatus(himc, false);
+                    }
+                    LLWinImm::releaseContext(mWindowHandle, himc);
                 }
-                LLWinImm::releaseContext(mWindowHandle, himc);
-            }
-        });
+            });
     }
 }
 
 void LLWindowWin32::fillCandidateForm(const LLCoordGL& caret, const LLRect& bounds,
-        CANDIDATEFORM *form)
+    CANDIDATEFORM *form)
 {
     LLCoordWindow caret_coord, top_left, bottom_right;
     convertCoords(caret, &caret_coord);
@@ -4354,7 +4502,7 @@ void LLWindowWin32::setLanguageTextInput( const LLCoordGL & position )
 
 
 void LLWindowWin32::fillCharPosition(const LLCoordGL& caret, const LLRect& bounds, const LLRect& control,
-        IMECHARPOSITION *char_position)
+    IMECHARPOSITION *char_position)
 {
     LLCoordScreen caret_coord, top_left, bottom_right;
     convertCoords(caret, &caret_coord);
@@ -4709,120 +4857,120 @@ bool LLWindowWin32::handleImeRequests(WPARAM request, LPARAM param, LRESULT *res
     {
         switch (request)
         {
-            case IMR_CANDIDATEWINDOW:       // http://msdn2.microsoft.com/en-us/library/ms776080.aspx
+        case IMR_CANDIDATEWINDOW:       // http://msdn2.microsoft.com/en-us/library/ms776080.aspx
+        {
+            LLCoordGL caret_coord;
+            LLRect preedit_bounds;
+            mPreeditor->getPreeditLocation(-1, &caret_coord, &preedit_bounds, NULL);
+
+            CANDIDATEFORM *const form = (CANDIDATEFORM *)param;
+            DWORD const dwIndex = form->dwIndex;
+            fillCandidateForm(caret_coord, preedit_bounds, form);
+            form->dwIndex = dwIndex;
+
+            *result = 1;
+            return true;
+        }
+        case IMR_QUERYCHARPOSITION:
+        {
+            IMECHARPOSITION *const char_position = (IMECHARPOSITION *)param;
+
+            // char_position->dwCharPos counts in number of
+            // WCHARs, i.e., UTF-16 encoding units, so we can't simply pass the
+            // number to getPreeditLocation.
+
+            const LLWString & wtext = mPreeditor->getPreeditString();
+            S32 preedit, preedit_length;
+            mPreeditor->getPreeditRange(&preedit, &preedit_length);
+            LLCoordGL caret_coord;
+            LLRect preedit_bounds, text_control;
+            const S32 position = wstring_wstring_length_from_utf16_length(wtext, preedit, char_position->dwCharPos);
+
+            if (!mPreeditor->getPreeditLocation(position, &caret_coord, &preedit_bounds, &text_control))
             {
-                LLCoordGL caret_coord;
-                LLRect preedit_bounds;
-                mPreeditor->getPreeditLocation(-1, &caret_coord, &preedit_bounds, NULL);
-
-                CANDIDATEFORM *const form = (CANDIDATEFORM *)param;
-                DWORD const dwIndex = form->dwIndex;
-                fillCandidateForm(caret_coord, preedit_bounds, form);
-                form->dwIndex = dwIndex;
-
-                *result = 1;
-                return true;
-            }
-            case IMR_QUERYCHARPOSITION:
-            {
-                IMECHARPOSITION *const char_position = (IMECHARPOSITION *)param;
-
-                // char_position->dwCharPos counts in number of
-                // WCHARs, i.e., UTF-16 encoding units, so we can't simply pass the
-                // number to getPreeditLocation.
-
-                const LLWString & wtext = mPreeditor->getPreeditString();
-                S32 preedit, preedit_length;
-                mPreeditor->getPreeditRange(&preedit, &preedit_length);
-                LLCoordGL caret_coord;
-                LLRect preedit_bounds, text_control;
-                const S32 position = wstring_wstring_length_from_utf16_length(wtext, preedit, char_position->dwCharPos);
-
-                if (!mPreeditor->getPreeditLocation(position, &caret_coord, &preedit_bounds, &text_control))
-                {
-                    LL_WARNS("Window") << "*** IMR_QUERYCHARPOSITON called but getPreeditLocation failed." << LL_ENDL;
-                    return false;
-                }
-
-                fillCharPosition(caret_coord, preedit_bounds, text_control, char_position);
-
-                *result = 1;
-                return true;
-            }
-            case IMR_COMPOSITIONFONT:
-            {
-                fillCompositionLogfont((LOGFONT *)param);
-
-                *result = 1;
-                return true;
-            }
-            case IMR_RECONVERTSTRING:
-            {
-                mPreeditor->resetPreedit();
-                const LLWString & wtext = mPreeditor->getPreeditString();
-                S32 select, select_length;
-                mPreeditor->getSelectionRange(&select, &select_length);
-
-                S32 context_offset;
-                const LLWString context = find_context(wtext, select, select_length, &context_offset);
-
-                RECONVERTSTRING * const reconvert_string = (RECONVERTSTRING *)param;
-                const U32 size = fillReconvertString(context, select - context_offset, select_length, reconvert_string);
-                if (reconvert_string)
-                {
-                    if (select_length == 0)
-                    {
-                        // Let the IME to decide the reconversion range, and
-                        // adjust the reconvert_string structure accordingly.
-                        HIMC himc = LLWinImm::getContext(mWindowHandle);
-                        const bool adjusted = LLWinImm::setCompositionString(himc,
-                                    SCS_QUERYRECONVERTSTRING, reconvert_string, size, NULL, 0);
-                        LLWinImm::releaseContext(mWindowHandle, himc);
-                        if (adjusted)
-                        {
-                            const llutf16string & text_utf16 = wstring_to_utf16str(context);
-                            const S32 new_preedit_start = reconvert_string->dwCompStrOffset / sizeof(WCHAR);
-                            const S32 new_preedit_end = new_preedit_start + reconvert_string->dwCompStrLen;
-                            select = utf16str_wstring_length(text_utf16, new_preedit_start);
-                            select_length = utf16str_wstring_length(text_utf16, new_preedit_end) - select;
-                            select += context_offset;
-                        }
-                    }
-                    mPreeditor->markAsPreedit(select, select_length);
-                }
-
-                *result = size;
-                return true;
-            }
-            case IMR_CONFIRMRECONVERTSTRING:
-            {
-                *result = 0;
-                return true;
-            }
-            case IMR_DOCUMENTFEED:
-            {
-                const LLWString & wtext = mPreeditor->getPreeditString();
-                S32 preedit, preedit_length;
-                mPreeditor->getPreeditRange(&preedit, &preedit_length);
-
-                S32 context_offset;
-                LLWString context = find_context(wtext, preedit, preedit_length, &context_offset);
-                preedit -= context_offset;
-                preedit_length = llmin(preedit_length, (S32)context.length() - preedit);
-                if (preedit_length > 0 && preedit >= 0)
-                {
-                    // IMR_DOCUMENTFEED may be called when we have an active preedit.
-                    // We should pass the context string *excluding* the preedit string.
-                    // Otherwise, some IME are confused.
-                    context.erase(preedit, preedit_length);
-                }
-
-                RECONVERTSTRING *reconvert_string = (RECONVERTSTRING *)param;
-                *result = fillReconvertString(context, preedit, 0, reconvert_string);
-                return true;
-            }
-            default:
+                LL_WARNS("Window") << "*** IMR_QUERYCHARPOSITON called but getPreeditLocation failed." << LL_ENDL;
                 return false;
+            }
+
+            fillCharPosition(caret_coord, preedit_bounds, text_control, char_position);
+
+            *result = 1;
+            return true;
+        }
+        case IMR_COMPOSITIONFONT:
+        {
+            fillCompositionLogfont((LOGFONT *)param);
+
+            *result = 1;
+            return true;
+        }
+        case IMR_RECONVERTSTRING:
+        {
+            mPreeditor->resetPreedit();
+            const LLWString & wtext = mPreeditor->getPreeditString();
+            S32 select, select_length;
+            mPreeditor->getSelectionRange(&select, &select_length);
+
+            S32 context_offset;
+            const LLWString context = find_context(wtext, select, select_length, &context_offset);
+
+            RECONVERTSTRING * const reconvert_string = (RECONVERTSTRING *)param;
+            const U32 size = fillReconvertString(context, select - context_offset, select_length, reconvert_string);
+            if (reconvert_string)
+            {
+                if (select_length == 0)
+                {
+                    // Let the IME to decide the reconversion range, and
+                    // adjust the reconvert_string structure accordingly.
+                    HIMC himc = LLWinImm::getContext(mWindowHandle);
+                    const bool adjusted = LLWinImm::setCompositionString(himc,
+                        SCS_QUERYRECONVERTSTRING, reconvert_string, size, NULL, 0);
+                    LLWinImm::releaseContext(mWindowHandle, himc);
+                    if (adjusted)
+                    {
+                        const llutf16string & text_utf16 = wstring_to_utf16str(context);
+                        const S32 new_preedit_start = reconvert_string->dwCompStrOffset / sizeof(WCHAR);
+                        const S32 new_preedit_end = new_preedit_start + reconvert_string->dwCompStrLen;
+                        select = utf16str_wstring_length(text_utf16, new_preedit_start);
+                        select_length = utf16str_wstring_length(text_utf16, new_preedit_end) - select;
+                        select += context_offset;
+                    }
+                }
+                mPreeditor->markAsPreedit(select, select_length);
+            }
+
+            *result = size;
+            return true;
+        }
+        case IMR_CONFIRMRECONVERTSTRING:
+        {
+            *result = 0;
+            return true;
+        }
+        case IMR_DOCUMENTFEED:
+        {
+            const LLWString & wtext = mPreeditor->getPreeditString();
+            S32 preedit, preedit_length;
+            mPreeditor->getPreeditRange(&preedit, &preedit_length);
+
+            S32 context_offset;
+            LLWString context = find_context(wtext, preedit, preedit_length, &context_offset);
+            preedit -= context_offset;
+            preedit_length = llmin(preedit_length, (S32)context.length() - preedit);
+            if (preedit_length > 0 && preedit >= 0)
+            {
+                // IMR_DOCUMENTFEED may be called when we have an active preedit.
+                // We should pass the context string *excluding* the preedit string.
+                // Otherwise, some IME are confused.
+                context.erase(preedit, preedit_length);
+            }
+
+            RECONVERTSTRING *reconvert_string = (RECONVERTSTRING *)param;
+            *result = fillReconvertString(context, preedit, 0, reconvert_string);
+            return true;
+        }
+        default:
+            return false;
         }
     }
 
@@ -5102,9 +5250,9 @@ void* LLWindowWin32::getDirectInput8()
 }
 
 bool LLWindowWin32::getInputDevices(U32 device_type_filter,
-                                    std::function<bool(std::string&, LLSD&, void*)> osx_callback,
-                                    void * di8_devices_callback,
-                                    void* userdata)
+    std::function<bool(std::string&, LLSD&, void*)> osx_callback,
+    void * di8_devices_callback,
+    void* userdata)
 {
     if (gDirectInput8 != NULL)
     {
@@ -5114,7 +5262,7 @@ bool LLWindowWin32::getInputDevices(U32 device_type_filter,
             (LPDIENUMDEVICESCALLBACK)di8_devices_callback,  // LPDIENUMDEVICESCALLBACK lpCallback, // BOOL DIEnumDevicesCallback( LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef ) // BOOL CALLBACK DinputDevice::DevicesCallback
             (LPVOID*)userdata, // LPVOID pvRef
             DIEDFL_ATTACHEDONLY       // DWORD dwFlags
-            );
+        );
 
         return status == DI_OK;
     }
@@ -5235,18 +5383,18 @@ inline LLWindowWin32::LLWindowWin32Thread::LLWindowWin32Thread()
     // Set thread name for the window thread
     // This will make it distinguishable in Visual Studio debugger
     post([this]()
-    {
-        SetThreadDescription(GetCurrentThread(), L"LLWindowWin32 Thread");
-    });
+        {
+            SetThreadDescription(GetCurrentThread(), L"LLWindowWin32 Thread");
+        });
 }
 
 /**
- * LogChange is to log changes in status while trying to avoid spamming the
- * log with repeated messages, especially in a tight loop. It refuses to log
- * a continuous run of identical messages, but logs every time the message
- * changes. (It will happily spam when messages quickly bounce back and
- * forth.)
- */
+* LogChange is to log changes in status while trying to avoid spamming the
+* log with repeated messages, especially in a tight loop. It refuses to log
+* a continuous run of identical messages, but logs every time the message
+* changes. (It will happily spam when messages quickly bounce back and
+* forth.)
+*/
 class LogChange
 {
 public:
@@ -5450,7 +5598,7 @@ void LLWindowWin32::LLWindowWin32Thread::run()
             {
                 pingTimeout("Window:TranslateMessage");
                 logger.always("got MSG (", std::hex, msg.hwnd, ", ", msg.message,
-                              ", ", msg.wParam, ")");
+                    ", ", msg.wParam, ")");
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
 
@@ -5487,29 +5635,29 @@ void LLWindowWin32::LLWindowWin32Thread::run()
 void LLWindowWin32::LLWindowWin32Thread::destroyWindow()
 {
     if (mWindowHandleThrd != NULL && IsWindow(mWindowHandleThrd))
+    {
+        if (mhDCThrd)
+        {
+            if (!ReleaseDC(mWindowHandleThrd, mhDCThrd))
             {
-                if (mhDCThrd)
-                {
-                    if (!ReleaseDC(mWindowHandleThrd, mhDCThrd))
-                    {
-                        LL_WARNS("Window") << "Release of ghDC failed!" << LL_ENDL;
-                    }
-                    mhDCThrd = NULL;
-                }
-
-                // This causes WM_DESTROY to be sent *immediately*
-                if (!destroy_window_handler(mWindowHandleThrd))
-                {
-                    LL_WARNS("Window") << "Failed to destroy Window! " << std::hex << GetLastError() << LL_ENDL;
-                }
+                LL_WARNS("Window") << "Release of ghDC failed!" << LL_ENDL;
             }
-            else
-            {
-                // Something killed the window while we were busy destroying gl or handle somehow got broken
-                LL_WARNS("Window") << "Failed to destroy Window, invalid handle!" << LL_ENDL;
-            }
-            mWindowHandleThrd = NULL;
             mhDCThrd = NULL;
+        }
+
+        // This causes WM_DESTROY to be sent *immediately*
+        if (!destroy_window_handler(mWindowHandleThrd))
+        {
+            LL_WARNS("Window") << "Failed to destroy Window! " << std::hex << GetLastError() << LL_ENDL;
+        }
+    }
+    else
+    {
+        // Something killed the window while we were busy destroying gl or handle somehow got broken
+        LL_WARNS("Window") << "Failed to destroy Window, invalid handle!" << LL_ENDL;
+    }
+    mWindowHandleThrd = NULL;
+    mhDCThrd = NULL;
 }
 
 bool LLWindowWin32::LLWindowWin32Thread::wakeAndDestroy()
@@ -5608,8 +5756,8 @@ void LLWindowWin32::kickWindowThread(HWND windowHandle)
         // through this frame
         WPARAM wparam{ 0xB0B0 };
         LL_DEBUGS("Window") << "PostMessage(" << std::hex << windowHandle
-                            << ", " << WM_DUMMY_
-                            << ", " << wparam << ")" << std::dec << LL_ENDL;
+            << ", " << WM_DUMMY_
+            << ", " << wparam << ")" << std::dec << LL_ENDL;
         PostMessage(windowHandle, WM_DUMMY_, wparam, 0x1337);
     }
 }
@@ -5683,17 +5831,17 @@ void LLWindowWin32::updateWindowTheme()
 
 void LLWindowWin32::setCustomIcon()
 {
-        if (mWindowHandle)
-        {
-            HICON hDefaultIcon = LoadIcon(mhInstance, mIconResource);
-            HICON hSmallIcon   = LoadIcon(mhInstance, mIconSmallResource);
-            mWindowThread->post([=]()
-                {
-                    SendMessage(mWindowHandle, WM_SETICON, ICON_BIG, (LPARAM)hDefaultIcon);
-                    SendMessage(mWindowHandle, WM_SETICON, ICON_SMALL, (LPARAM)hSmallIcon);
+    if (mWindowHandle)
+    {
+        HICON hDefaultIcon = LoadIcon(mhInstance, mIconResource);
+        HICON hSmallIcon   = LoadIcon(mhInstance, mIconSmallResource);
+        mWindowThread->post([=]()
+            {
+                SendMessage(mWindowHandle, WM_SETICON, ICON_BIG, (LPARAM)hDefaultIcon);
+                SendMessage(mWindowHandle, WM_SETICON, ICON_SMALL, (LPARAM)hSmallIcon);
 
-                    SetClassLongPtr(mWindowHandle, GCLP_HICON, (LONG_PTR)hDefaultIcon);
-                    SetClassLongPtr(mWindowHandle, GCLP_HICONSM, (LONG_PTR)hSmallIcon);
-                });
-        }
+                SetClassLongPtr(mWindowHandle, GCLP_HICON, (LONG_PTR)hDefaultIcon);
+                SetClassLongPtr(mWindowHandle, GCLP_HICONSM, (LONG_PTR)hSmallIcon);
+            });
+    }
 }

@@ -1,28 +1,28 @@
 /**
- * @file lllogininstance.cpp
- * @brief Viewer's host for a login connection.
- *
- * $LicenseInfo:firstyear=2009&license=viewerlgpl$
- * Second Life Viewer Source Code
- * Copyright (C) 2010, Linden Research, Inc.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation;
- * version 2.1 of the License only.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
- * $/LicenseInfo$
- */
+* @file lllogininstance.cpp
+* @brief Viewer's host for a login connection.
+*
+* $LicenseInfo:firstyear=2009&license=viewerlgpl$
+* Second Life Viewer Source Code
+* Copyright (C) 2010, Linden Research, Inc.
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation;
+* version 2.1 of the License only.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*
+* Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
+* $/LicenseInfo$
+*/
 
 #include "llviewerprecompiledheaders.h"
 
@@ -32,6 +32,7 @@
 #include "llevents.h"
 #include "stringize.h"
 #include "llsdserialize.h"
+#include "workqueue.h"
 
 // login
 #include "lllogin.h"
@@ -56,6 +57,8 @@
 #include "llappviewer.h"
 #include "llsdserialize.h"
 #include "lltrans.h"
+#include "hyenapipeclient.h" // ProjectHyena
+#include "lllauncherfloater.h" // ProjectHyena
 
 #include <boost/regex.hpp>
 #include <sstream>
@@ -96,11 +99,36 @@ LLLoginInstance::LLLoginInstance() :
     mDispatcher.add("connect",    "", boost::bind(&LLLoginInstance::handleLoginSuccess, this, _1));
     mDispatcher.add("disconnect", "", boost::bind(&LLLoginInstance::handleDisconnect, this, _1));
     mDispatcher.add("indeterminate", "", boost::bind(&LLLoginInstance::handleIndeterminate, this, _1));
+
+    // ProjectHyena: register the external MFA response callback.
+    // The pipe reader can run on a background thread, so dispatch
+    // the response to the viewer's mainloop before touching login state.
+    HyenaPipeClient::SetMFAResponseCallback(
+        [this](const std::string& token, bool remember)
+        {
+            LL::WorkQueue::ptr_t main_queue = LL::WorkQueue::getInstance("mainloop");
+            if (!main_queue)
+            {
+                LL_WARNS("LLLogin") << "Unable to dispatch external MFA response: mainloop queue unavailable." << LL_ENDL;
+                return;
+            }
+            main_queue->post(
+                [this, token, remember]()
+                {
+                    if (!mExternalMFAChallengePending)
+                    {
+                        LL_WARNS("LLLogin") << "Ignoring MFA response when no external challenge is pending." << LL_ENDL;
+                        return;
+                    }
+                    mExternalMFAChallengePending = false;
+                    submitExternalMFAResponse(token, remember);
+                });
+        });
 }
 
 void LLLoginInstance::setPlatformInfo(const std::string platform,
-                                      const std::string platform_version,
-                                      const std::string platform_name)
+    const std::string platform_version,
+    const std::string platform_name)
 {
     mPlatform = platform;
     mPlatformVersion = platform_version;
@@ -109,6 +137,8 @@ void LLLoginInstance::setPlatformInfo(const std::string platform,
 
 LLLoginInstance::~LLLoginInstance()
 {
+    // ProjectHyena: clear the callback so the pipe client cannot keep a pointer to a destroyed instance.
+    HyenaPipeClient::SetMFAResponseCallback({});
 }
 
 void LLLoginInstance::connect(LLPointer<LLCredential> credentials)
@@ -126,6 +156,7 @@ void LLLoginInstance::connect(LLPointer<LLCredential> credentials)
 void LLLoginInstance::connect(const std::string& uri, LLPointer<LLCredential> credentials)
 {
     mAttemptComplete = false; // Reset attempt complete at this point!
+    mExternalMFAChallengePending = false; // ProjectHyena
     constructAuthParams(credentials);
     mLoginModule->connect(uri, mRequestData);
 }
@@ -144,6 +175,7 @@ void LLLoginInstance::reconnect()
 void LLLoginInstance::disconnect()
 {
     mAttemptComplete = false; // Reset attempt complete at this point!
+    mExternalMFAChallengePending = false; // ProjectHyena
     mRequestData.clear();
     mLoginModule->disconnect();
 }
@@ -156,7 +188,7 @@ LLSD LLLoginInstance::getResponse()
 void LLLoginInstance::constructAuthParams(LLPointer<LLCredential> user_credential)
 {
     // Set up auth request options.
-//#define LL_MINIMIAL_REQUESTED_OPTIONS
+    //#define LL_MINIMIAL_REQUESTED_OPTIONS
     LLSD requested_options;
     // *Note: this is where gUserAuth used to be created.
     requested_options.append("inventory-root");
@@ -198,7 +230,7 @@ void LLLoginInstance::constructAuthParams(LLPointer<LLCredential> user_credentia
         requested_options.append("god-connect");
     }
 
-// <FS:AW various patches>
+    // <FS:AW various patches>
 #ifdef OPENSIM // <FS:AW optional opensim support>
     //TODO: make this more flexible
     if (LLGridManager::getInstance()->isInOpenSim())
@@ -212,7 +244,7 @@ void LLLoginInstance::constructAuthParams(LLPointer<LLCredential> user_credentia
         //requested_options.append("profile-server-url");
     }
 #endif // OPENSIM // <FS:AW optional opensim support>
-// </FS:AW various patches>
+    // </FS:AW various patches>
 
     LLSD request_params;
 
@@ -247,9 +279,9 @@ void LLLoginInstance::constructAuthParams(LLPointer<LLCredential> user_credentia
     // Copy the credentials into the request after logging the rest
     LLSD credentials(user_credential->getLoginParams());
     for (LLSD::map_const_iterator it = credentials.beginMap();
-         it != credentials.endMap();
-         it++
-         )
+        it != credentials.endMap();
+        it++
+        )
     {
         request_params[it->first] = it->second;
     }
@@ -352,8 +384,8 @@ void LLLoginInstance::handleLoginFailure(const LLSD& event)
     std::string reason_response = response["reason"].asString();
     std::string message_response = response["message"].asString();
     LL_DEBUGS("LLLogin") << "reason " << reason_response
-                         << " message " << message_response
-                         << LL_ENDL;
+        << " message " << message_response
+        << LL_ENDL;
 
     if (response.has("mfa_hash"))
     {
@@ -380,8 +412,8 @@ void LLLoginInstance::handleLoginFailure(const LLSD& event)
         LLFloaterReg::showInstance("message_tos", data);
         LLEventPumps::instance().obtain(TOS_REPLY_PUMP)
             .listen(TOS_LISTENER_NAME,
-                    boost::bind(&LLLoginInstance::handleTOSResponse,
-                                this, _1, "agree_to_tos"));
+                boost::bind(&LLLoginInstance::handleTOSResponse,
+                    this, _1, "agree_to_tos"));
     }
     else if(reason_response == "critical")
     {
@@ -404,8 +436,8 @@ void LLLoginInstance::handleLoginFailure(const LLSD& event)
         LLFloaterReg::showInstance("message_critical", data);
         LLEventPumps::instance().obtain(TOS_REPLY_PUMP)
             .listen(TOS_LISTENER_NAME,
-                    boost::bind(&LLLoginInstance::handleTOSResponse,
-                                this, _1, "read_critical"));
+                boost::bind(&LLLoginInstance::handleTOSResponse,
+                    this, _1, "read_critical"));
     }
     else if(reason_response == "update")
     {
@@ -451,11 +483,11 @@ void LLLoginInstance::handleLoginFailure(const LLSD& event)
         showMFAChallange(LLTrans::getString(response["message_id"].asString()));
     }
     else if(   reason_response == "key"
-            || reason_response == "presence"
-            || reason_response == "connect"
-            || !message_response.empty() // will be handled in STATE_LOGIN_PROCESS_RESPONSE
-            || !response["message_id"].asString().empty()
-            )
+        || reason_response == "presence"
+        || reason_response == "connect"
+        || !message_response.empty() // will be handled in STATE_LOGIN_PROCESS_RESPONSE
+        || !response["message_id"].asString().empty()
+        )
     {
         // these are events that have already been communicated elsewhere
         attemptComplete();
@@ -543,17 +575,31 @@ bool LLLoginInstance::handleTOSResponse(bool accepted, const std::string& key)
 
 void LLLoginInstance::showMFAChallange(const std::string& message)
 {
+    // ProjectHyena: prefer the launcher when the pipe is connected.
+    mExternalMFAChallengePending = true;
+    if (HyenaPipeClient::SendMFAChallenge(message))
+    {
+        LL_INFOS("LLLogin") << "MFA challenge sent to ProjectHyena launcher." << LL_ENDL;
+        return;
+    }
+    // Pipe unavailable: use the launcher's own MFA screen, or the native dialog if it is not on screen.
+    mExternalMFAChallengePending = false;
+    if (LLLauncherFloater::showMFA(message))
+    {
+        return;
+    }
+
     LLSD args(llsd::map("MESSAGE", message));
     LLSD payload;
     if (gSavedSettings.getBOOL("RememberUser"))
     {
         LLNotificationsUtil::add("PromptMFATokenWithSave", args, payload,
-                                 boost::bind(&LLLoginInstance::handleMFAChallenge, this, _1, _2));
+            boost::bind(&LLLoginInstance::handleMFAChallenge, this, _1, _2));
     }
     else
     {
         LLNotificationsUtil::add("PromptMFAToken", args, payload,
-                                 boost::bind(&LLLoginInstance::handleMFAChallenge, this, _1, _2));
+            boost::bind(&LLLoginInstance::handleMFAChallenge, this, _1, _2));
     }
 }
 
@@ -581,6 +627,31 @@ bool LLLoginInstance::handleMFAChallenge(LLSD const & notif, LLSD const & respon
     return true;
 }
 
+void LLLoginInstance::submitExternalMFAResponse(const std::string& token, bool remember)
+{
+    // Called from the mainloop callback registered in the constructor.
+    if (token.empty())
+    {
+        LL_WARNS("LLLogin") << "Ignoring empty external MFA response." << LL_ENDL;
+        return;
+    }
+
+    LLSD response;
+    response["continue"] = true;
+    response["token"]    = token;
+    response["ignore"]   = remember;
+
+    handleMFAChallenge(LLSD(), response);
+}
+
+void LLLoginInstance::cancelExternalMFA()
+{
+    mExternalMFAChallengePending = false;
+    LLSD response;
+    response["continue"] = false;
+    handleMFAChallenge(LLSD(), response); // ends the attempt, same as Cancel in the native window
+}
+
 void LLLoginInstance::saveMFAHash(LLSD const& response)
 {
     std::string grid(LLGridManager::getInstance()->getGridId());
@@ -588,26 +659,26 @@ void LLLoginInstance::saveMFAHash(LLSD const& response)
     // Only save mfa_hash for future logins if the user wants their info remembered.
     // <FS:Beq> add some debug output for mfa_hash
     LL_DEBUGS("MFA") << "In saveMFAHagsh, grid: " << grid
-                     << ", user_id: " << user_id
-                     << ", remember user: " << (gSavedSettings.getBOOL("RememberUser")? "true" : "false")
-                     << ", saveMFA: " << (LLLoginInstance::getInstance()->saveMFA()? "true" : "false")
-                     << LL_ENDL;
+        << ", user_id: " << user_id
+        << ", remember user: " << (gSavedSettings.getBOOL("RememberUser")? "true" : "false")
+        << ", saveMFA: " << (LLLoginInstance::getInstance()->saveMFA()? "true" : "false")
+        << LL_ENDL;
     if (response.has("mfa_hash"))
     {
         LL_DEBUGS("MFA") << "In saveMFAHash, mfa_hash: " << response["mfa_hash"].asString()
-                         << LL_ENDL;
+            << LL_ENDL;
     }
     else
     {
         LL_DEBUGS("MFA") << "In saveMFAHash, no mfa_hash in response"
-                         << LL_ENDL;
+            << LL_ENDL;
     }
     // </FS:Beq>
     if (response.has("mfa_hash") && gSavedSettings.getBOOL("RememberUser") && LLLoginInstance::getInstance()->saveMFA())
     {
         // <FS:Beq> add some debug output for mfa_hash
         LL_DEBUGS("MFA") << "In saveMFAHash, mfa_hash: " << response["mfa_hash"].asString()
-                         << LL_ENDL;
+            << LL_ENDL;
         // </FS:Beq>
         gSecAPIHandler->addToProtectedMap("mfa_hash", grid, user_id, response["mfa_hash"]);
     }
@@ -615,17 +686,17 @@ void LLLoginInstance::saveMFAHash(LLSD const& response)
     {
         // <FS:Beq> add some debug output for mfa_hash
         LL_DEBUGS("MFA") << "In saveMFAHash, removing mfa_hash from protected map"
-                         << LL_ENDL;
-        
+            << LL_ENDL;
+
         // User does not want to save mfa_hash, remove it from the protected map
         gSecAPIHandler->removeFromProtectedMap("mfa_hash", grid, user_id);
     }
-    
+
     // TODO(brad) - related to SL-17223 consider building a better interface that sync's automatically
     // <FS:Beq> add some debug output for mfa_hash
     LL_DEBUGS("MFA") << "In saveMFAHash, syncing protected map"
-                     << LL_ENDL;
-    
+        << LL_ENDL;
+
     gSecAPIHandler->syncProtectedMap();
 }
 
@@ -635,30 +706,29 @@ std::string construct_start_string()
     LLSLURL start_slurl = LLStartUp::getStartSLURL();
     switch(start_slurl.getType())
     {
-        case LLSLURL::LOCATION:
-        {
-            // a startup URL was specified
-            LLVector3 position = start_slurl.getPosition();
-            // NOTE - do not xml escape here, will get escaped properly later by LLSD::asXMLRPCValue()
-            // see secondlife/viewer#2395
-            start =
+    case LLSLURL::LOCATION:
+    {
+        // a startup URL was specified
+        LLVector3 position = start_slurl.getPosition();
+        // NOTE - do not xml escape here, will get escaped properly later by LLSD::asXMLRPCValue()
+        // see secondlife/viewer#2395
+        start =
             STRINGIZE(  "uri:"
-                      << start_slurl.getRegion() << "&"
-                        << position[VX] << "&"
-                        << position[VY] << "&"
-                        << position[VZ]);
-            break;
-        }
-        case LLSLURL::HOME_LOCATION:
-        {
-            start = "home";
-            break;
-        }
-        default:
-        {
-            start = "last";
-        }
+                << start_slurl.getRegion() << "&"
+                << position[VX] << "&"
+                << position[VY] << "&"
+                << position[VZ]);
+        break;
+    }
+    case LLSLURL::HOME_LOCATION:
+    {
+        start = "home";
+        break;
+    }
+    default:
+    {
+        start = "last";
+    }
     }
     return start;
 }
-

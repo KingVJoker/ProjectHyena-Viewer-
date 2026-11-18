@@ -1,28 +1,28 @@
 /**
- * @file llwindowwin32.h
- * @brief Windows implementation of LLWindow class
- *
- * $LicenseInfo:firstyear=2001&license=viewerlgpl$
- * Second Life Viewer Source Code
- * Copyright (C) 2010, Linden Research, Inc.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation;
- * version 2.1 of the License only.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
- * $/LicenseInfo$
- */
+* @file llwindowwin32.h
+* @brief Windows implementation of LLWindow class
+*
+* $LicenseInfo:firstyear=2001&license=viewerlgpl$
+* Second Life Viewer Source Code
+* Copyright (C) 2010, Linden Research, Inc.
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation;
+* version 2.1 of the License only.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*
+* Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
+* $/LicenseInfo$
+*/
 
 #ifndef LL_LLWINDOWWIN32_H
 #define LL_LLWINDOWWIN32_H
@@ -37,6 +37,8 @@
 #include "llthreadsafequeue.h"
 #include "llmutex.h"
 #include "workqueue.h"
+
+#include <atomic>
 
 // Hack for async host by name
 #define LL_WM_HOST_RESOLVED      (WM_APP + 1)
@@ -54,6 +56,8 @@ public:
     bool maximize() override;
     void minimize() override;
     void restore() override;
+    // Project Hyena: draw our own title bar instead of the Windows one
+    void setCustomFrame(bool enable, S32 caption_height, S32 menu_left, S32 menu_right, S32 buttons_width);
     bool getFullscreen();
     bool getPosition(LLCoordScreen *position) override;
     bool getSize(LLCoordScreen *size) override;
@@ -131,9 +135,9 @@ public:
 
     void* getDirectInput8() override;
     bool getInputDevices(U32 device_type_filter,
-                                     std::function<bool(std::string&, LLSD&, void*)> osx_callback,
-                                     void* win_callback,
-                                     void* userdata) override;
+        std::function<bool(std::string&, LLSD&, void*)> osx_callback,
+        void* win_callback,
+        void* userdata) override;
 
     U32 getRawWParam() { return mRawWParam; }
 
@@ -271,6 +275,13 @@ protected:
     void setCustomIcon();
     bool mCurrentDarkMode { false };
 
+    // Project Hyena custom title bar (read on the window thread, written on the main thread)
+    std::atomic<bool> mCustomFrame{ false };
+    std::atomic<S32>  mCaptionHeight{ 0 };
+    std::atomic<S32>  mMenuLeft{ 0 };
+    std::atomic<S32>  mMenuRight{ 0 };
+    std::atomic<S32>  mButtonsWidth{ 0 };
+
     struct LLWindowWin32Thread;
     LLWindowWin32Thread* mWindowThread = nullptr;
     LLThreadSafeQueue<std::function<void()>> mFunctionQueue;
@@ -281,10 +292,10 @@ protected:
     void kickWindowThread(HWND windowHandle=0);
 
     friend class LLWindowManager;
-// <FS:ND> Allow to query for window chrome sizes.
+    // <FS:ND> Allow to query for window chrome sizes.
 public:
     virtual void getWindowChrome( U32 &aChromeW, U32 &aChromeH );
-// </FS:ND>
+    // </FS:ND>
 };
 
 class LLSplashScreenWin32 : public LLSplashScreen
