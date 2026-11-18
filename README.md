@@ -26,8 +26,8 @@
 
 <p align="center">
   <img src="https://i.gyazo.com/362e58eebe729c95e8981782dff5dbd1.jpg" alt="Project Hyena login screen" width="32%">
-  <img src="" alt="Project Hyena multi-factor authentication screen" width="32%">
-  <img src="docs/images/inworld.png" alt="Project Hyena in-world" width="32%">
+  <img src="https://i.gyazo.com/7303263b3b71bae31a604f33ff80aa82.png" alt="Project Hyena multi-factor authentication screen" width="32%">
+  <img src="docs/images/inworld.pn" alt="Project Hyena in-world" width="32%">
 </p>
 <p align="center">
   <i>Login screen &nbsp;|&nbsp; Multi-factor authentication screen &nbsp;|&nbsp; In-world</i>
